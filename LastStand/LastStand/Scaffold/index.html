@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang = "en-US">
+<head>
+	<meta charset = "UTF-8">
+	<title>Game Name</title>
+	
+	<link rel="stylesheet" type="text/css" href="Styles/stylesheet.css">
+</head>
+<body onload = "MyGame.game.initialize();">
+    <div id = "game">
+		<div id = "main-menu" class = "screen">
+			<ul class = "menu">
+				<li><button id = "id-new-game">New&nbsp;Game</button></li>
+				<li><button id = "id-high-scores">High&nbsp;Scores</button></li>
+				<li><button id = "id-help">Help</button></li>
+				<li><button id = "id-about">About</button></li>
+			</ul>
+		</div>
+		<div id = "game-play" class = "screen">
+            <canvas id = "canvas-main" width = "1000" height = "800"></canvas>
+		</div>
+		<div id = "high-scores" class = "screen">
+            <div class='list-high-score'>
+                <h1>High Scores</h1>
+                <ol id="highScores">
+                </ol>
+            </div>
+			<ul class = "menu">
+                <li><button id = "id-high-scores-reset">Reset</button></li>
+				<li><button id = "id-high-scores-back">Back</button></li>
+			</ul>
+		</div>
+		<div id = "help" class = "screen">
+			<h1>Help</h1>
+			<p>Help stuff</p>
+			<ul class = "menu">
+				<li><button id = "id-help-back">Back</button></li>
+			</ul>
+		</div>
+		<div id = "about" class = "screen">
+			<h1>About</h1>
+			<p>Developed by</p>
+			<p>Trevor Gotberg</p>
+			<ul class = "menu">
+				<li><button id = "id-about-back">Back</button></li>
+			</ul>
+		</div>
+        <div id = "pause" class = "screen">
+			<h1>Paused</h1>
+			<ul class = "menu">
+                <li><button id = "id-pause-resume">Resume</button><li>
+                <li><button id = "id-pause-quit">Quit</button><li>
+			</ul>
+		</div>
+	</div>
+    
+    <script src = "Scripts/input.js"></script>
+    <script src = "Scripts/random.js"></script>
+    <script src = "Scripts/keyboard.js"></script>
+    <script src = "Scripts/render.js"></script>
+    <script src = "Scripts/particle.js"></script>
+    <script src = "Scripts/game.js"></script>
+	<script src = "Scripts/Screens/mainmenu.js"></script>
+    <script src = "Scripts/Screens/pause.js"></script>
+	<script src = "Scripts/Screens/gameplay.js"></script>
+	<script src = "Scripts/Screens/highscores.js"></script>
+	<script src = "Scripts/Screens/help.js"></script>
+	<script src = "Scripts/Screens/about.js"></script>
+    
+</body>
+</html>

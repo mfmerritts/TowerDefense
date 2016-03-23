@@ -1,0 +1,52 @@
+.screen {
+    display: none;
+    padding-top: 100px;
+}
+
+.screen.active {
+    display: block;
+}
+
+.menu {
+    list-style-type: none;
+}
+
+.list-high-score{
+    display: inline-block;
+    text-align: left; 
+    list-style-position:inside;
+    font-size: 20px;
+}
+
+button {
+    background-color: #4CAF50;
+    border: 2px black solid;
+    color: white;
+    padding: 15px 32px;
+    width: 150px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: yellow;
+    color: black;
+}
+
+#game-play{
+    padding-top: 0px
+}
+
+#game {
+    height: 800px;
+    width: 1000px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px black solid;
+    text-align: center;
+}
