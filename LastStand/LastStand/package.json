@@ -1,0 +1,10 @@
+{
+  "name": "LastStand",
+  "version": "0.0.0",
+  "description": "LastStand",
+  "main": "server.js",
+  "author": {
+    "name": "Trevor",
+    "email": ""
+  }
+}
