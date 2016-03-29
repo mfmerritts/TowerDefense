@@ -42,7 +42,7 @@ MyGame.game = (function(screens, input, graphics, particles) {
 		showScreen : showScreen,
         registerControls : registerControls,
         updateKeyboard : updateKeyboard,
-        Graphics : graphics,
-        ParticleSystem : particles
+        graphics : graphics,
+        particleSystem : particles
 	};
 }(MyGame.screens, MyGame.input, MyGame.graphics, MyGame.particles));

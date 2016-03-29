@@ -2,7 +2,28 @@ MyGame.graphics = (function() {
     'use strict';
     
     var canvas = document.getElementById('canvas-main'),
-        context = canvas.getContext('2d');
+        context = canvas.getContext('2d'),
+        images = {},
+        imagesLoaded = 0,
+        imagesToLoad = 0;
+    
+    function loadImages(imageList){
+        imagesToLoad = imageList.length;
+        for (var i = 0; i < imageList.length; ++i) {
+            var imageInfo = imageList[i];
+
+            images[imageInfo.imageId] = createImage(imageInfo);
+        }
+    };
+    
+    function createImage(imageInfo){
+        var image = new Image();
+        image.onLoad = function (){
+            imagesLoaded++;
+        }
+        image.src = imageInfo.src;
+        return image;
+    }
                 
     function drawBall(spec){
         context.save();
@@ -57,6 +78,23 @@ MyGame.graphics = (function() {
         context.restore();
     };
     
+    function drawGameObject(renderObject){
+        //if (imagesLoaded === imagesToLoad) {
+            context.save();
+            context.translate(renderObject.position.x, renderObject.position.y);
+            context.rotate(renderObject.rotation);
+            context.translate(-renderObject.position.x, -renderObject.position.y);
+
+            context.drawImage(
+                images[renderObject.imageId],
+                renderObject.position.x - renderObject.size / 2,
+                renderObject.position.y - renderObject.size / 2,
+                renderObject.size, renderObject.size);
+
+            context.restore();
+        //}
+    };
+    
     function clearCanvas(){
         context.save();
 		context.setTransform(1, 0, 0, 1, 0, 0);
@@ -69,6 +107,8 @@ MyGame.graphics = (function() {
 		drawRec : drawRec,
         drawText : drawText,
         drawParticle : drawParticle,
+        loadImages : loadImages,
+        drawGameObject : drawGameObject,
         clearCanvas : clearCanvas
 	};
 }());
