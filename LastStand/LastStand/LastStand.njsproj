@@ -33,7 +33,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Scaffold\Scripts\models.js" />
+    <Compile Include="Scaffold\Scripts\gameObjects.js" />
     <Compile Include="server.js" />
     <Content Include="Images\TurretLevel1.png" />
     <Content Include="package.json" />

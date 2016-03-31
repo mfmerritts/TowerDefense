@@ -1,79 +1,45 @@
-MyGame.screens['game-play'] = (function(game, models) {
+MyGame.screens['game-play'] = (function(game) {
 	'use strict';
     
-    var lastTime = 0,
-        gameObjects = [];
+    var lastTime = 0;
         
     function gameOver(message){
     }
 	
     function initialize() {
-        var imageList = [];
-        imageList.push({
-            imageId : 'T1',
-            src : 'Images/TurretLevel1.png'
-        });
-        
-        imageList.push({
-            imageId : 'M1',
-            src : 'Images/MissileLevel1.png'
-        });
-        
-        imageList.push({
-            imageId : 'B1',
-            src : 'Images/BombLevel1.png'
-        });
-        
-        imageList.push({
-            imageId : 'F1',
-            src : 'Images/FrostLevel1.png'
-        });
-
-        game.graphics.loadImages(imageList);
-         
-        gameObjects.push(models.Turret({
+        /* Initialing placing towers for the demo */
+        game.gameObjects.Turret({
             position : { x: 500, y: 500 },
             gridIds : ['1'],
             size : 40
-        }));
+        });
 
-        gameObjects.push(models.Missile({
+        game.gameObjects.Missile({
             position : { x: 400, y: 400 },
             gridIds : ['1'],
             size : 40
-        }));
+        });
 
-        gameObjects.push(models.Bomb({
+        game.gameObjects.Bomb({
             position : { x: 600, y: 400 },
             gridIds : ['1'],
             size : 40
-        }));
+        });
 
-        gameObjects.push(models.Frost({
+        game.gameObjects.Frost({
             position : { x: 500, y: 300 },
             gridIds : ['1'],
             size : 40
-        }));
+        });
 	}
     
     function render(elapsedTime){
-        game.graphics.clearCanvas();
-        for (var i = 0; i < gameObjects.length; ++i) {
-            var obj = gameObjects[i];
-            game.graphics.drawGameObject({
-                position : obj.position,
-                rotation : obj.rotation,
-                size : obj.size,
-                imageId : obj.imageId
-            });
-        }
+        game.gameObjects.RenderAll();
     }
     
     function update(elapsedTime) {
         //game.particleSystem.update(elapsedTime);
-        for (var i = 0; i < gameObjects.length; ++i) {
-            gameObjects[i].update(elapsedTime);
-        }
+        game.gameObjects.UpdateAll(elapsedTime);
     }
     
 	function gameLoop(time) {
@@ -101,4 +67,4 @@ MyGame.screens['game-play'] = (function(game, models) {
 		initialize : initialize,
 		run : run
 	};
-}(MyGame.game, MyGame.models));
+}(MyGame.game));

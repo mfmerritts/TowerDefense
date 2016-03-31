@@ -1,4 +1,4 @@
-MyGame.game = (function(screens, input, graphics, particles) {
+MyGame.game = (function(screens, input, particles, gameObjects) {
 	'use strict';
     
     var keyBoard = input.Keyboard();
@@ -37,12 +37,12 @@ MyGame.game = (function(screens, input, graphics, particles) {
 		showScreen('main-menu');
 	}
 	
-	return {
-		initialize : initialize,
-		showScreen : showScreen,
+    return {
+        initialize : initialize,
+        showScreen : showScreen,
         registerControls : registerControls,
         updateKeyboard : updateKeyboard,
-        graphics : graphics,
-        particleSystem : particles
+        particleSystem : particles,
+        gameObjects : gameObjects
 	};
-}(MyGame.screens, MyGame.input, MyGame.graphics, MyGame.particles));
+}(MyGame.screens, MyGame.input, MyGame.particles, MyGame.GameObjects));

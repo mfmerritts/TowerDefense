@@ -16,6 +16,10 @@ MyGame.graphics = (function() {
         }
     };
     
+    function toggleTowerGrid(){
+        towerGridActive = !towerGridActive;
+    }
+    
     function createImage(imageInfo){
         var image = new Image();
         image.onLoad = function (){
@@ -25,11 +29,11 @@ MyGame.graphics = (function() {
         return image;
     }
                 
-    function drawBall(spec){
+    function drawCircle(spec) {
         context.save();
         context.beginPath();
-        context.arc(spec.x + spec.radius, spec.y + spec.radius, spec.radius, 0, Math.PI*2);
-        context.fillStyle = spec.color;
+        context.arc(spec.x, spec.y, spec.radius, 0, Math.PI*2);
+        context.fillStyle = spec.fillStyle;
         context.fill();
         context.closePath();
         context.restore();
@@ -79,20 +83,26 @@ MyGame.graphics = (function() {
     };
     
     function drawGameObject(renderObject){
-        //if (imagesLoaded === imagesToLoad) {
-            context.save();
-            context.translate(renderObject.position.x, renderObject.position.y);
-            context.rotate(renderObject.rotation);
-            context.translate(-renderObject.position.x, -renderObject.position.y);
+        context.save();
+        context.translate(renderObject.position.x, renderObject.position.y);
+        context.rotate(renderObject.rotation);
+        context.translate(-renderObject.position.x, -renderObject.position.y);
 
-            context.drawImage(
-                images[renderObject.imageId],
-                renderObject.position.x - renderObject.size / 2,
-                renderObject.position.y - renderObject.size / 2,
-                renderObject.size, renderObject.size);
+        context.drawImage(
+            images[renderObject.imageId],
+            renderObject.position.x - renderObject.size / 2,
+            renderObject.position.y - renderObject.size / 2,
+            renderObject.size, renderObject.size);
+        context.restore();
 
-            context.restore();
-        //}
+        if (renderObject.towerGridActive && renderObject.radius) {
+            drawCircle({
+                x: renderObject.position.x,
+                y: renderObject.position.y,
+                radius: renderObject.radius,
+                fillStyle: 'rgba(255, 0, 0, 0.25)'
+            });
+        }
     };
     
     function clearCanvas(){
@@ -102,12 +112,34 @@ MyGame.graphics = (function() {
 		context.restore();
     };
     
+    var imageList = [];
+    imageList.push({
+        imageId : 'T1',
+        src: 'Scaffold/Images/TurretLevel1.png'
+    });
+    imageList.push({
+        imageId : 'M1',
+        src: 'Scaffold/Images/MissileLevel1.png'
+    });
+    imageList.push({
+        imageId : 'B1',
+        src: 'Scaffold/Images/BombLevel1.png'
+    });
+    imageList.push({
+        imageId : 'F1',
+        src: 'Scaffold/Images/FrostLevel1.png'
+    });
+    imageList.push({
+        imageId : 'C1',
+        src: 'Scaffold/Images/Creep1.png'
+    });
+    loadImages(imageList);
+
     return {
-		drawBall : drawBall,
+        drawCircle: drawCircle,
 		drawRec : drawRec,
         drawText : drawText,
         drawParticle : drawParticle,
-        loadImages : loadImages,
         drawGameObject : drawGameObject,
         clearCanvas : clearCanvas
 	};
