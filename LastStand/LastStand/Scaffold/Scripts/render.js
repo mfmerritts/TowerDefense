@@ -3,11 +3,17 @@ MyGame.graphics = (function() {
     
     var canvas = document.getElementById('canvas-main'),
         context = canvas.getContext('2d'),
-        canvas2 = document.getElementById("canvas-tower-select"),
-        context2 = canvas2.getContext("2d"),
         images = {},
         imagesLoaded = 0,
-        imagesToLoad = 0;
+        imagesToLoad = 0,
+        mouseX = 0,
+        mouseY = 0;
+    
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        mouseX = evt.clientX - rect.left;
+        mouseY = evt.clientY - rect.top;
+    }
     
     function loadImages(imageList){
         imagesToLoad = imageList.length;
@@ -86,21 +92,24 @@ MyGame.graphics = (function() {
     
     function drawGameObject(renderObject){
         context.save();
-        context.translate(renderObject.position.x, renderObject.position.y);
-        context.rotate(renderObject.rotation);
-        context.translate(-renderObject.position.x, -renderObject.position.y);
+        
+        if (!renderObject.useMouse) {
+            context.translate(renderObject.position.x, renderObject.position.y);
+            context.rotate(renderObject.rotation);
+            context.translate(-renderObject.position.x, -renderObject.position.y);
+        }
 
         context.drawImage(
             images[renderObject.imageId],
-            renderObject.position.x - renderObject.size / 2,
-            renderObject.position.y - renderObject.size / 2,
+            renderObject.useMouse ? mouseX - renderObject.size/2 : renderObject.position.x - renderObject.size / 2,
+            renderObject.useMouse ? mouseY - renderObject.size/2 : renderObject.position.y - renderObject.size / 2,
             renderObject.size, renderObject.size);
         context.restore();
 
         if (renderObject.towerGridActive && renderObject.radius) {
             drawCircle({
-                x: renderObject.position.x,
-                y: renderObject.position.y,
+                x: renderObject.useMouse ? mouseX : renderObject.position.x,
+                y: renderObject.useMouse ? mouseY : renderObject.position.y,
                 radius: renderObject.radius,
                 fillStyle: 'rgba(255, 0, 0, 0.25)'
             });
@@ -127,30 +136,35 @@ MyGame.graphics = (function() {
     }
     
     function drawTowerSelectMenu(){
-        context2.save();
+        context.save();
+        
+        context.beginPath();
+        context.moveTo(700, 0);
+        context.lineTo(700, 700);
+        context.stroke();
 
-        context2.drawImage(
+        context.drawImage(
             images['T1'],
-            25,
+            725,
             100,
             50, 50);
-        context2.drawImage(
+        context.drawImage(
             images['M1'],
-            25,
+            725,
             200,
             50, 50);
-        context2.drawImage(
+        context.drawImage(
             images['B1'],
-            25,
+            725,
             300,
             50, 50);
-        context2.drawImage(
+        context.drawImage(
             images['F1'],
-            25,
+            725,
             400,
             50, 50);
         
-        context2.restore();
+        context.restore();
     }
     
     function clearCanvas(){
@@ -159,13 +173,6 @@ MyGame.graphics = (function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.restore();
     };
-    
-    function clearCanvas2(){
-        context2.save();
-        context2.setTransform(1, 0, 0, 1, 0, 0);
-        context2.clearRect(0, 0, canvas2.width, canvas2.height);
-        context2.restore();
-    }
     
     var imageList = [];
     imageList.push({
@@ -189,6 +196,10 @@ MyGame.graphics = (function() {
         src: 'Scaffold/Images/Creep1.png'
     });
     loadImages(imageList);
+    
+    canvas.addEventListener('mousemove', function (evt) {
+        getMousePos(canvas, evt);
+    }, false);
 
     return {
         drawCircle: drawCircle,
@@ -197,7 +208,6 @@ MyGame.graphics = (function() {
         drawParticle : drawParticle,
         drawGameObject : drawGameObject,
         clearCanvas : clearCanvas,
-        clearCanvas2 : clearCanvas2,
         drawGrid : drawGrid,
         drawTowerSelectMenu : drawTowerSelectMenu
 	};

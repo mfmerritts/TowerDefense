@@ -3,7 +3,8 @@
     
     var gameObjects = {},
         towerGridActive = false,
-        towerGrid = [];
+        towerGrid = [],
+        selectedTower = 0;
     
     function GameObjects(){
         var that = {},
@@ -14,6 +15,7 @@
             var newId = ++nextId;
             gameObject.id = newId;
             objectsList[newId] = gameObject;
+            selectedTower = newId;
         }
 
         that.remove = function (objectId){
@@ -40,6 +42,36 @@
     
     function ToggleTowerGrid(){
         towerGridActive = !towerGridActive;
+    }
+    
+    function PlaceTower(x, y){
+        var dx = 0,
+            dy = 0;
+     
+        for (var rows = 0; rows < towerGrid.length; ++rows) {
+            if (y < dy + 50) { /* the tower is in this row */
+                for (var items = 0; items < towerGrid[rows].length; ++items) {
+                    if (x < dx + 50) { /* the tower is in the column */
+                        if (towerGrid[rows][items] == 0) {
+                            towerGrid[rows][items] = 1;
+                            var tower = gameObjects.getObject(selectedTower);
+                            tower.useMouse = false;
+                            tower.position = { x: dx + 25, y: dy + 25 };
+                            tower.size = 40;
+                            ToggleTowerGrid();
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        dx += 50;
+                    }
+                }
+            } else {
+                dy += 50;
+            }
+        }
+        return false;
     }
     
     function findTarget(tower) {
@@ -72,12 +104,13 @@
     function GameObject(spec){
         var that = {
             /* x,y coordinate of the GameObject */
-            position : spec.position,
+            position : spec.useMouse ? { x: 0, y: 0 } : spec.position,
             /* list of gridIds that this GameObject is a member of */
             gridIds : spec.gridIds,
             rotation : 0,
             size : spec.size,
-            id : 0
+            id : 0,
+            useMouse : spec.useMouse
         };
         
         that.removeGridId = function (idToRemove){
@@ -92,6 +125,11 @@
 
         return that;
     };
+    
+    function DeleteSelectedTower(){
+        gameObjects.remove(selectedTower);
+        selectedTower = 0;
+    }
     
     function Creep(spec){
         var that = GameObject(spec);
@@ -131,7 +169,6 @@
                /* TODO: Track Target */
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             }
-                
         }
 
         gameObjects.add(that);
@@ -198,7 +235,9 @@
         that.targetId = -1;
         
         that.update = function (elapsedTime) {
-            findTarget(that);
+            if(!that.useMouse)
+                findTarget(that);
+
             if (that.targetId == -1) {
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
@@ -220,11 +259,11 @@
     
     function RenderAll(){
         graphics.clearCanvas();
-        graphics.clearCanvas2();
         var objectList = gameObjects.getObjectList();
         for (var i = 0; i < objectList.length; ++i) {
             var obj = objectList[i];
             graphics.drawGameObject({
+                useMouse : obj.useMouse,
                 position : obj.position,
                 rotation : obj.rotation,
                 size : obj.size,
@@ -277,7 +316,9 @@
         Creep : Creep,
         UpdateAll : UpdateAll,
         RenderAll : RenderAll,
-        ToggleTowerGrid : ToggleTowerGrid
+        ToggleTowerGrid : ToggleTowerGrid,
+        DeleteSelectedTower : DeleteSelectedTower,
+        PlaceTower : PlaceTower
     };
 
 }(MyGame.graphics));
