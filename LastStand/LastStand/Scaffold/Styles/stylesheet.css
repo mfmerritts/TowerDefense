@@ -41,12 +41,12 @@ button:hover {
 }
 
 #game {
-    height: 800px;
-    width: 1000px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    height: 700px;
+    width: 800px;
     border: 2px black solid;
     text-align: center;
+}
+
+.game-canvas{
+    float : left;
 }

@@ -9,29 +9,31 @@ MyGame.screens['game-play'] = (function(game) {
     function initialize() {
         /* Initialing placing towers for the demo */
         game.gameObjects.Turret({
-            position : { x: 500, y: 500 },
+            position : { x: 300, y: 400 },
             gridIds : ['1'],
             size : 40
         });
 
         game.gameObjects.Missile({
-            position : { x: 400, y: 400 },
+            position : { x: 200, y: 300 },
             gridIds : ['1'],
             size : 40
         });
 
         game.gameObjects.Bomb({
-            position : { x: 600, y: 400 },
+            position : { x: 400, y: 300 },
             gridIds : ['1'],
             size : 40
         });
 
         game.gameObjects.Frost({
-            position : { x: 500, y: 300 },
+            position : { x: 300, y: 200 },
             gridIds : ['1'],
             size : 40
         });
-	}
+
+        game.gameObjects.ToggleTowerGrid();
+    }
     
     function render(elapsedTime){
         game.gameObjects.RenderAll();

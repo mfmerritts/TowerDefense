@@ -2,7 +2,8 @@
     'use strict';
     
     var gameObjects = {},
-        towerGridActive = false;
+        towerGridActive = false,
+        towerGrid = [];
     
     function GameObjects(){
         var that = {},
@@ -219,6 +220,7 @@
     
     function RenderAll(){
         graphics.clearCanvas();
+        graphics.clearCanvas2();
         var objectList = gameObjects.getObjectList();
         for (var i = 0; i < objectList.length; ++i) {
             var obj = objectList[i];
@@ -231,6 +233,15 @@
                 towerGridActive : towerGridActive
             });
         }
+
+        if (towerGridActive) {
+            graphics.drawGrid({
+                grid : towerGrid,
+                size : 50
+            });
+        }
+
+        graphics.drawTowerSelectMenu();
     }
     
     function circleCollisionDetection(circle1, circle2) {
@@ -240,8 +251,23 @@
         
         return distance < circle1.radius + circle2.radius;
     }
-
+    
+    /* Initialize */
     gameObjects = GameObjects();
+
+    var temp = [];
+    var rows = 14;
+    var cols = 14;
+    
+    for (var x = 0; x < rows; x++) {
+        temp = [];
+        for (var y = 0; y < cols; y++) 
+            temp[y] = 0;
+
+        towerGrid.push(temp);
+    }
+    
+    graphics.drawTowerSelectMenu();
 
     return {
         Turret : Turret,

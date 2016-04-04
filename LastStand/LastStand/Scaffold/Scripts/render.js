@@ -3,6 +3,8 @@ MyGame.graphics = (function() {
     
     var canvas = document.getElementById('canvas-main'),
         context = canvas.getContext('2d'),
+        canvas2 = document.getElementById("canvas-tower-select"),
+        context2 = canvas2.getContext("2d"),
         images = {},
         imagesLoaded = 0,
         imagesToLoad = 0;
@@ -105,12 +107,65 @@ MyGame.graphics = (function() {
         }
     };
     
+    function drawGrid(spec){
+        context.save();
+        
+        var dx = 0,
+            dy = 0;
+        
+        for (var rows = 0; rows < spec.grid.length; ++rows) {
+            for (var items = 0; items < spec.grid[rows].length; ++items) {
+                context.rect(dx, dy, spec.size, spec.size);
+                context.stroke();
+                dx += spec.size;
+            }
+            dx = 0;
+            dy += spec.size;
+        }
+
+        context.restore();
+    }
+    
+    function drawTowerSelectMenu(){
+        context2.save();
+
+        context2.drawImage(
+            images['T1'],
+            25,
+            100,
+            50, 50);
+        context2.drawImage(
+            images['M1'],
+            25,
+            200,
+            50, 50);
+        context2.drawImage(
+            images['B1'],
+            25,
+            300,
+            50, 50);
+        context2.drawImage(
+            images['F1'],
+            25,
+            400,
+            50, 50);
+        
+        context2.restore();
+    }
+    
     function clearCanvas(){
         context.save();
-		context.setTransform(1, 0, 0, 1, 0, 0);
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.restore();
     };
+    
+    function clearCanvas2(){
+        context2.save();
+        context2.setTransform(1, 0, 0, 1, 0, 0);
+        context2.clearRect(0, 0, canvas2.width, canvas2.height);
+        context2.restore();
+    }
     
     var imageList = [];
     imageList.push({
@@ -141,6 +196,9 @@ MyGame.graphics = (function() {
         drawText : drawText,
         drawParticle : drawParticle,
         drawGameObject : drawGameObject,
-        clearCanvas : clearCanvas
+        clearCanvas : clearCanvas,
+        clearCanvas2 : clearCanvas2,
+        drawGrid : drawGrid,
+        drawTowerSelectMenu : drawTowerSelectMenu
 	};
 }());
