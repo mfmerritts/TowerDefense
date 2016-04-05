@@ -259,6 +259,15 @@
     
     function RenderAll(){
         graphics.clearCanvas();
+        graphics.drawStaticObjects();
+
+        if (towerGridActive) {
+            graphics.drawGrid({
+                grid : towerGrid,
+                size : 50
+            });
+        }
+
         var objectList = gameObjects.getObjectList();
         for (var i = 0; i < objectList.length; ++i) {
             var obj = objectList[i];
@@ -272,15 +281,6 @@
                 towerGridActive : towerGridActive
             });
         }
-
-        if (towerGridActive) {
-            graphics.drawGrid({
-                grid : towerGrid,
-                size : 50
-            });
-        }
-
-        graphics.drawTowerSelectMenu();
     }
     
     function circleCollisionDetection(circle1, circle2) {
@@ -306,7 +306,7 @@
         towerGrid.push(temp);
     }
     
-    graphics.drawTowerSelectMenu();
+    graphics.drawStaticObjects();
 
     return {
         Turret : Turret,

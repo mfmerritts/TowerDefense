@@ -111,7 +111,7 @@ MyGame.graphics = (function() {
                 x: renderObject.useMouse ? mouseX : renderObject.position.x,
                 y: renderObject.useMouse ? mouseY : renderObject.position.y,
                 radius: renderObject.radius,
-                fillStyle: 'rgba(255, 0, 0, 0.25)'
+                fillStyle: 'rgba(255, 0, 0, 0.15)'
             });
         }
     };
@@ -124,6 +124,7 @@ MyGame.graphics = (function() {
         
         for (var rows = 0; rows < spec.grid.length; ++rows) {
             for (var items = 0; items < spec.grid[rows].length; ++items) {
+                context.strokeStyle = "#a6a6a6";
                 context.rect(dx, dy, spec.size, spec.size);
                 context.stroke();
                 dx += spec.size;
@@ -135,8 +136,14 @@ MyGame.graphics = (function() {
         context.restore();
     }
     
-    function drawTowerSelectMenu(){
+    function drawStaticObjects(){
         context.save();
+        
+        context.drawImage(
+            images['BG'],
+            0,
+            0,
+            700, 700);
         
         context.beginPath();
         context.moveTo(700, 0);
@@ -176,6 +183,11 @@ MyGame.graphics = (function() {
     
     var imageList = [];
     imageList.push({
+        imageId : 'BG',
+        src: 'Scaffold/Images/Terrain.jpg'
+    });
+    loadImages(imageList);
+    imageList.push({
         imageId : 'T1',
         src: 'Scaffold/Images/TurretLevel1.png'
     });
@@ -209,6 +221,6 @@ MyGame.graphics = (function() {
         drawGameObject : drawGameObject,
         clearCanvas : clearCanvas,
         drawGrid : drawGrid,
-        drawTowerSelectMenu : drawTowerSelectMenu
+        drawStaticObjects : drawStaticObjects
 	};
 }());
