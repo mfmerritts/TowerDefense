@@ -54,6 +54,9 @@
                     if (x < dx + 50) { /* the tower is in the column */
                         if (towerGrid[rows][items] == 0) {
                             towerGrid[rows][items] = 1;
+                            //uncomment lines below to dipslay shortest paths
+                            //findShortestLeftToRight();
+                            //findShortestTopToBottom();
                             var tower = gameObjects.getObject(selectedTower);
                             tower.useMouse = false;
                             tower.position = { x: dx + 25, y: dy + 25 };
@@ -289,6 +292,152 @@
         var distance = Math.sqrt(dx * dx + dy * dy);
         
         return distance < circle1.radius + circle2.radius;
+    }
+    
+    function findShortestTopToBottom(){
+        //creates a new 2d array of objects that are used for BFS
+        //searchArray contains the objects that correspond to towerGrid array
+        var searchArry = [];
+        for (var x = 0; x < towerGrid.length; x++) {
+            var temp = [];
+            for (var y = 0; y < towerGrid[x].length; y++) {
+                var node = { posX: x, posY: y, pre: "null", visited: false, dis: 1000000};
+                temp.push(node);
+            }
+            searchArry.push(temp);
+        }
+
+        //this is where the BFS happens
+        var searchQueue = [];
+        searchArry[0][6].dis = 0;
+        searchQueue.push(searchArry[0][6]);
+        while (searchQueue.length != 0) {
+            var node = searchQueue[0];
+            searchQueue.splice(0, 1);
+            node.visited = true;
+            if (node.posX + 1 <= 13) {
+                //check down
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                    if(searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX + 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX + 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posX - 1 >= 0) {
+                //check up
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                    if(searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX - 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX - 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posY + 1 <= 13) {
+                //check right
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                    if(searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY + 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY + 1]);
+                    }
+                }
+            }
+            if (node.posY - 1 >= 0) {
+                //check left
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                    if(searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY - 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY - 1]);
+                    }
+                   
+                }
+            }
+        }
+        
+        //output of shortest path to endNode
+        var endNode = searchArry[13][6];
+        console.log("shortest path to [13][6] is...");
+        while (endNode.pre != "null") {
+            endNode = endNode.pre;
+            console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+        }
+    }
+    
+    function findShortestLeftToRight(){
+        //creates a new 2d array of objects that are used for BFS
+        //searchArray contains the objects that correspond to towerGrid array
+        var searchArry = [];
+        for (var x = 0; x < towerGrid.length; x++) {
+            var temp = [];
+            for (var y = 0; y < towerGrid[x].length; y++) {
+                var node = { posX: x, posY: y, pre: "null", visited: false, dis: 1000000 };
+                temp.push(node);
+            }
+            searchArry.push(temp);
+        }
+        
+        //this is where the BFS happens
+        var searchQueue = [];
+        searchArry[6][0].dis = 0;
+        searchQueue.push(searchArry[6][0]);
+        while(searchQueue.length != 0) {
+            var node = searchQueue[0];
+            searchQueue.splice(0, 1);
+            node.visited = true;
+            if (node.posX + 1 <= 13) {
+                //check down
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                    if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX + 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX + 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posX - 1 >= 0) {
+                //check up
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                    if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX - 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX - 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posY + 1 <= 13) {
+                //check right
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                    if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY + 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY + 1]);
+                    }
+                }
+            }
+            if (node.posY - 1 >= 0) {
+                //check left
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                    if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY - 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY - 1]);
+                    }
+                   
+                }
+            }
+        }
+        
+        //output of shortest path to endNode
+        var endNode = searchArry[6][13];
+        console.log("shortest path to [6][13] is...");
+        while (endNode.pre != "null") {
+            endNode = endNode.pre;
+            console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+        }
     }
     
     /* Initialize */
