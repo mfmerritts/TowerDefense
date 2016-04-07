@@ -136,18 +136,64 @@
     
     function Creep(spec){
         var that = GameObject(spec);
-
+        
         that.imageId = 'C1';
         that.velocity = { x: 1, y: 1 };
         that.speed = 200;
         that.hp = 50;
         that.angle = 3 * Math.PI / 180;
         that.isCreep = true;
-        
+        that.gridCoordX;
+        that.gridCoordY;
+        that.directionX;
+        that.directionY;
+        that.nextMove;
+               
         that.update = function (elapsedTime){
             that.angle += .5 * Math.PI / 180;
-            that.position.x += 100 * Math.cos(that.angle) * (elapsedTime / 1000);
-            that.position.y += 100 * Math.sin(that.angle) * (elapsedTime / 1000);
+
+            //cirle movement
+            //that.position.x += 100 * Math.cos(that.angle) * (elapsedTime / 1000);
+            //that.position.y += 100 * Math.sin(that.angle) * (elapsedTime / 1000);   
+            
+            that.gridCoordX = Math.floor(that.position.x / 50);
+            that.gridCoordY = Math.floor(that.position.y / 50);
+            //console.log("current loc: " + that.gridCoordX + " " + that.gridCoordY);
+            if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
+                //this is the code that handles the removal of this object
+                return;
+            }
+            that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+            console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
+            that.directionX = that.nextMove[1] - that.gridCoordX;
+            //console.log("that.directionX: " + that.directionX);
+            that.directionY = that.nextMove[0] - that.gridCoordY;
+            //console.log("that.directionY: " + that.directionY);
+            
+            //these helps the creep stay closer to the center of the square its in (x coords)
+            if (that.directionX == 0) {
+                var correction = that.position.x % (that.gridCoordX * 50);
+                if (correction > 30) {
+                    that.position.x -= 25 * (elapsedTime / 1000);
+                }
+                if (correction < 20) {
+                    that.position.x += 25 * (elapsedTime / 1000);
+                }
+            }
+            
+            //these helps the creep stay closer to the center of the square its in (y coords)
+            if (that.directionY == 0) {
+                var correction = that.position.y % (that.gridCoordY * 50);
+                if (correction > 30) {
+                    that.position.y -= 25 * (elapsedTime / 1000);
+                }
+                if (correction < 20) {
+                    that.position.y += 25 * (elapsedTime / 1000);
+                }
+            }
+
+            that.position.x += 25 * (elapsedTime / 1000) * that.directionX;
+            that.position.y += 25 * (elapsedTime / 1000) * that.directionY;
         }
 
         gameObjects.add(that);
@@ -294,10 +340,22 @@
         return distance < circle1.radius + circle2.radius;
     }
     
-    function findShortestTopToBottom(){
+    function findShortestTopToBottom(currentX, currentY){
+        //this code is when the creep has made it to the final square and now needs to exit the game
+        if ((currentX == 6)&&(currentY == 13)){
+            return [14, 6];
+            console.log("special case");
+        }
+        //the creep is offically off the grid, but still appears on the screen
+        //the code below continues the animation so the creep will move off the screen completely 
+        if ((currentX == 6) && (currentY == 14)) {
+            return [15, 6];
+            console.log("special case");
+        }
         //creates a new 2d array of objects that are used for BFS
         //searchArray contains the objects that correspond to towerGrid array
         var searchArry = [];
+        var pathArray = [];
         for (var x = 0; x < towerGrid.length; x++) {
             var temp = [];
             for (var y = 0; y < towerGrid[x].length; y++) {
@@ -309,8 +367,8 @@
 
         //this is where the BFS happens
         var searchQueue = [];
-        searchArry[0][6].dis = 0;
-        searchQueue.push(searchArry[0][6]);
+        searchArry[currentY][currentX].dis = 0; // it looks like its backwards for the x and y here but its not
+        searchQueue.push(searchArry[currentY][currentX]);
         while (searchQueue.length != 0) {
             var node = searchQueue[0];
             searchQueue.splice(0, 1);
@@ -358,13 +416,17 @@
             }
         }
         
+        pathArray.push([13, 6]);
         //output of shortest path to endNode
         var endNode = searchArry[13][6];
-        console.log("shortest path to [13][6] is...");
+        //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
+        //return next array to move to 
+        return pathArray[1];
     }
     
     function findShortestLeftToRight(){
@@ -430,7 +492,7 @@
                 }
             }
         }
-        
+       
         //output of shortest path to endNode
         var endNode = searchArry[6][13];
         console.log("shortest path to [6][13] is...");
@@ -454,7 +516,15 @@
 
         towerGrid.push(temp);
     }
-    
+        
+    //adds creep
+    //needs to be replaced with a way to continuously introduce new creeps
+    Creep({
+        position : { x: 325, y: 0 },
+        gridIds : ['1'],
+        size : 50
+    });
+
     graphics.drawStaticObjects();
 
     return {
