@@ -53,7 +53,32 @@
                 for (var items = 0; items < towerGrid[rows].length; ++items) {
                     if (x < dx + 50) { /* the tower is in the column */
                         if (towerGrid[rows][items] == 0) {
+                            //don't allow placement of tower at 0, 6
+                            if ((rows == 0) && (items == 6)) {
+                                return false;
+                            }
                             towerGrid[rows][items] = 1;
+                            var temp2 = findShortestTopToBottom(0, 6);
+                            if (temp2 == null) {
+                                towerGrid[rows][items] = 0;
+                                return false;
+                            }
+                            //make sure creeps can't be blocked in
+                            var objectList = gameObjects.getObjectList();
+                            for (var i = 0; i < objectList.length; i++) {
+                                //console.log(i);
+                                if (objectList[i].isCreep) {
+                                    console.log("checking!");
+                                    var temp = null;
+                                    temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    if (temp == null) {
+                                        towerGrid[rows][items] = 0;
+                                        return false;
+                                        console.log("blockage found!");
+                                    }
+
+                                }
+                            }
                             //uncomment lines below to dipslay shortest paths
                             //findShortestLeftToRight();
                             //findShortestTopToBottom();
@@ -161,10 +186,14 @@
             //console.log("current loc: " + that.gridCoordX + " " + that.gridCoordY);
             if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
                 //this is the code that handles the removal of this object
+                gameObjects.remove(that.id);
                 return;
             }
             that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
-            console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
+            if (that.nextMove == null) {
+                return;
+            }
+            //console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
             that.directionX = that.nextMove[1] - that.gridCoordX;
             //console.log("that.directionX: " + that.directionX);
             that.directionY = that.nextMove[0] - that.gridCoordY;
@@ -419,6 +448,10 @@
         pathArray.push([13, 6]);
         //output of shortest path to endNode
         var endNode = searchArry[13][6];
+        if (endNode.pre == "null") {
+            //this is stuff happens if a creep's path had been blocked
+            return null;
+        }
         //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
