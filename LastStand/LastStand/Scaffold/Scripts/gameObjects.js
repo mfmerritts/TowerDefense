@@ -68,13 +68,13 @@
                             for (var i = 0; i < objectList.length; i++) {
                                 //console.log(i);
                                 if (objectList[i].isCreep) {
-                                    console.log("checking!");
+                                    //console.log("checking!");
                                     var temp = null;
                                     temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
                                     if (temp == null) {
                                         towerGrid[rows][items] = 0;
                                         return false;
-                                        console.log("blockage found!");
+                                        //console.log("blockage found!");
                                     }
 
                                 }
@@ -244,8 +244,25 @@
             if (that.targetId == -1) {
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
-               /* TODO: Track Target */
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                /* TODO: Track Target */
+                var target = gameObjects.getObject(that.targetId);
+                var diffX = target.position.x - that.position.x;
+                var diffY = target.position.y - that.position.y;
+                var angle = Math.atan2(diffY, diffX) * (180 / Math.PI);
+                if (angle >= -90) {
+                    angle += 90;
+                }
+                else {
+                    angle += 450;
+                }
+                var diffAngle = ((that.rotation * (180 / Math.PI)) % 360) - angle;
+                console.log(diffAngle);
+                if (diffAngle > 0) {
+                    that.rotation -= defaultRotationSpeed * (elapsedTime / 1000);
+                }      
+                else if (diffAngle < 0) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                }
             }
         }
 
@@ -269,7 +286,24 @@
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
                 /* TODO: Track Target */
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                var target = gameObjects.getObject(that.targetId);
+                var diffX = target.position.x - that.position.x;
+                var diffY = target.position.y - that.position.y;
+                var angle = Math.atan2(diffY, diffX) * (180 / Math.PI);
+                if (angle >= -90) {
+                    angle += 90;
+                }
+                else {
+                    angle += 450;
+                }
+                var diffAngle = ((that.rotation * (180 / Math.PI)) % 360) - angle;
+                console.log(diffAngle);
+                if (diffAngle > 0) {
+                    that.rotation -= defaultRotationSpeed * (elapsedTime / 1000);
+                }      
+                else if (diffAngle < 0) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                }
             }
                 
         }
@@ -294,7 +328,24 @@
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
                 /* TODO: Track Target */
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                var target = gameObjects.getObject(that.targetId);
+                var diffX = target.position.x - that.position.x;
+                var diffY = target.position.y - that.position.y;
+                var angle = Math.atan2(diffY, diffX) * (180 / Math.PI);
+                if (angle >= -90) {
+                    angle += 90;
+                }
+                else {
+                    angle += 450;
+                }
+                var diffAngle = ((that.rotation * (180 / Math.PI)) % 360) - angle;
+                console.log(diffAngle);
+                if (diffAngle > 0) {
+                    that.rotation -= defaultRotationSpeed * (elapsedTime / 1000);
+                }      
+                else if (diffAngle < 0) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                }
             }
         }
         
@@ -320,7 +371,24 @@
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
                 /* TODO: Track Target */
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                var target = gameObjects.getObject(that.targetId);
+                var diffX = target.position.x - that.position.x;
+                var diffY = target.position.y - that.position.y;
+                var angle = Math.atan2(diffY, diffX) * (180 / Math.PI);
+                if (angle >= -90) {
+                    angle += 90;
+                }
+                else {
+                    angle += 450;
+                }
+                var diffAngle = ((that.rotation * (180 / Math.PI)) % 360) - angle;
+                console.log(diffAngle);
+                if (diffAngle > 0) {
+                    that.rotation -= defaultRotationSpeed * (elapsedTime / 1000);
+                }      
+                else if (diffAngle < 0) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                }
             }
                 
         }
