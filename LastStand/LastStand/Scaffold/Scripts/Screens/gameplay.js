@@ -65,25 +65,21 @@ MyGame.screens['game-play'] = (function (game) {
             case 1:
                 game.gameObjects.Turret({
                     useMouse : true,
-                    gridIds : ['1'],
                     size : 40
                 });
                 break;
             case 2: game.gameObjects.Missile({
                     useMouse : true,
-                    gridIds : ['1'],
                     size : 40
                 });
                 break;
             case 3: game.gameObjects.Bomb({
                     useMouse : true,
-                    gridIds : ['1'],
                     size : 40
                 });
                 break;
             case 4: game.gameObjects.Frost({
                     useMouse : true,
-                    gridIds : ['1'],
                     size : 40
                 });
                 break;

@@ -114,6 +114,26 @@ MyGame.graphics = (function() {
                 fillStyle: 'rgba(255, 0, 0, 0.15)'
             });
         }
+
+        if (renderObject.percentage) {
+            var color = '';
+            if (renderObject.percentage <= 1 && renderObject.percentage > .75) {
+                color = 'rgb(0, 255, 0)';
+            } else if (renderObject.percentage <= .75 && renderObject.percentage > .5) {
+                color = 'rgb(255, 255, 0)';
+            } else if (renderObject.percentage <= .5 && renderObject.percentage > .25) {
+                color = 'rgb(255, 153, 0)';
+            } else {
+                color = 'rgb(255, 0, 0)';
+            }
+            drawRec({
+                x: renderObject.position.x - renderObject.size/2,
+                y: renderObject.position.y - renderObject.size/2 - 15,
+                width: renderObject.percentage * renderObject.size,
+                height: 5,
+                rgb: color
+            });
+        }
     };
     
     function drawGrid(spec){
@@ -207,6 +227,10 @@ MyGame.graphics = (function() {
         imageId : 'C1',
         src: 'Scaffold/Images/Creep1.png'
     });
+    imageList.push({
+        imageId : 'P1',
+        src: 'Scaffold/Images/P1.jpg'
+    })
     loadImages(imageList);
     
     canvas.addEventListener('mousemove', function (evt) {
