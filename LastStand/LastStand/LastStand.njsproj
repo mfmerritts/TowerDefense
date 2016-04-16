@@ -35,12 +35,10 @@
   <ItemGroup>
     <Compile Include="Scaffold\Scripts\gameObjects.js" />
     <Compile Include="server.js" />
-    <Content Include="Images\TurretLevel1.png" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Images\" />
     <Folder Include="Scaffold\" />
     <Folder Include="Scaffold\Scripts\" />
     <Folder Include="Scaffold\Scripts\Screens\" />

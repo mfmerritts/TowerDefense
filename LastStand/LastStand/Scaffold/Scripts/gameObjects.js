@@ -6,7 +6,41 @@
         towerGrid = [],
         collisionGrid = [],
         selectedTower = 0,
-        trackTargetRotationSpeed = Math.PI * .8;
+        trackTargetRotationSpeed = Math.PI * .8,
+        sprites = {};
+    
+    function SpriteObject(spec) {
+        var that = {},
+            imageIds = spec.imageIds,
+            imageElapsedTime = 0,
+            imageTimes = spec.imageTimes,
+            currentId = 0;
+
+        that.update = function (elapsedTime){
+            imageElapsedTime += elapsedTime;
+            if (imageElapsedTime >= imageTimes[currentId]) {
+                imageElapsedTime = 0;
+                currentId++;
+                if (currentId >= imageIds.length) {
+                    currentId = 0;
+                }
+            }
+            return imageIds[currentId];
+        }
+
+        return that;
+    }
+    
+    function GenerateSpritesList() {
+        sprites[1] = SpriteObject({
+            imageIds : ['Red1', 'Red2', 'Red3', 'Red4', 'Red5', 'Red6'],
+            imageTimes : [1000, 200, 100, 1000, 100, 200]
+        });
+        sprites[2] = SpriteObject({
+            imageIds : ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4'],
+            imageTimes : [200, 1000, 200, 600]
+        })
+    }
     
     function GameObjects() {
         var that = {},
@@ -90,10 +124,10 @@
         
         for (var rows = 0; rows < towerGrid.length; ++rows) {
             if (y < dy + 50) {
- /* the tower is in this row */
+                /* the tower is in this row */
                 for (var items = 0; items < towerGrid[rows].length; ++items) {
                     if (x < dx + 50) {
- /* the tower is in the column */
+                        /* the tower is in the column */
                         if (towerGrid[rows][items] == 0) {
                             //don't allow placement of tower at 0, 6
                             if ((rows == 0) && (items == 6)) {
@@ -299,14 +333,15 @@
     
     function Creep(spec) {
         var that = GameObject(spec),
-            originalHp = 50;
+            originalHp = spec.hp,
+            spriteSheetId = spec.spriteSheetId;
         
-        that.imageId = 'C1';
+        
+        that.imageId = sprites[spriteSheetId].update(0);
         that.velocity = { x: 1, y: 1 };
-        that.speed = 200;
-        that.hp = 50;
+        that.speed = spec.speed;
+        that.hp = spec.hp;
         that.percentage = 1;
-        that.angle = 3 * Math.PI / 180;
         that.isCreep = true;
         that.gridCoordX;
         that.gridCoordY;
@@ -315,12 +350,9 @@
         that.nextMove;
         
         that.update = function (elapsedTime) {
-            that.angle += .5 * Math.PI / 180;
-            
             that.percentage = that.hp / originalHp;
-            //cirle movement
-            //that.position.x += 100 * Math.cos(that.angle) * (elapsedTime / 1000);
-            //that.position.y += 100 * Math.sin(that.angle) * (elapsedTime / 1000);   
+            
+            that.imageId = sprites[spriteSheetId].update(elapsedTime);
             
             that.gridCoordX = Math.floor(that.position.x / 50);
             that.gridCoordY = Math.floor(that.position.y / 50);
@@ -344,10 +376,10 @@
             if (that.directionX == 0) {
                 var correction = that.position.x % (that.gridCoordX * 50);
                 if (correction > 30) {
-                    that.position.x -= 25 * (elapsedTime / 1000);
+                    that.position.x -= that.speed * (elapsedTime / 1000);
                 }
                 if (correction < 20) {
-                    that.position.x += 25 * (elapsedTime / 1000);
+                    that.position.x += that.speed * (elapsedTime / 1000);
                 }
             }
             
@@ -355,18 +387,20 @@
             if (that.directionY == 0) {
                 var correction = that.position.y % (that.gridCoordY * 50);
                 if (correction > 30) {
-                    that.position.y -= 25 * (elapsedTime / 1000);
+                    that.position.y -= that.speed * (elapsedTime / 1000);
                 }
                 if (correction < 20) {
-                    that.position.y += 25 * (elapsedTime / 1000);
+                    that.position.y += that.speed * (elapsedTime / 1000);
                 }
             }
             
             var lastCollisionGridX = Math.floor(that.position.x / 50),
                 lastCollisionGridY = Math.floor(that.position.y / 50);
             
-            that.position.x += 25 * (elapsedTime / 1000) * that.directionX;
-            that.position.y += 25 * (elapsedTime / 1000) * that.directionY;
+            that.position.x += that.speed * (elapsedTime / 1000) * that.directionX;
+            that.position.y += that.speed * (elapsedTime / 1000) * that.directionY;
+            
+            that.rotation = Math.atan(that.directionY / that.directionX);
             
             UpdateGrid(that, lastCollisionGridX, lastCollisionGridY);
             
@@ -384,8 +418,8 @@
             lastFiredElapsedTime = 0;
         
         that.imageId = 'T1';
-        that.fireRate = .5;
-        that.damage = 2;
+        that.fireRate = .25;
+        that.damage = 3;
         that.targetTypes = 2;
         that.radius = 100;
         that.targetId = -1;
@@ -466,7 +500,7 @@
         that.targetTypes = 0;
         that.radius = 250;
         that.targetId = -1;
-          
+        
         that.update = function (elapsedTime) {
             findTarget(that);
             if (that.targetId == -1) {
@@ -531,7 +565,7 @@
         }
         
         gameObjects.add(that);
-
+        
         selectedTower = that.id;
     }
     
@@ -743,8 +777,10 @@
         }
     }
     
+    
     /* Initialize */
     gameObjects = GameObjects();
+    GenerateSpritesList();
     
     var temp = [],
         temp2 = [],
@@ -758,7 +794,7 @@
         }
         towerGrid.push(temp);
     }
-
+    
     for (var i = 0; i < rows / 2; ++i) {
         temp2 = [];
         for (var k = 0; k < cols / 2; ++k) {
@@ -767,14 +803,28 @@
         collisionGrid.push(temp2);
     }
     
+
+    
     //adds creep
     //needs to be replaced with a way to continuously introduce new creeps
     setInterval(function () {
         Creep({
             position : { x: 325, y: 0 },
-            size : 30
+            size : 30,
+            spriteSheetId : 1,
+            speed : 30,
+            hp : 30
         });
-    }, 2000);
+    }, 3000);
+    setInterval(function () {
+        Creep({
+            position : { x: 325, y: 0 },
+            size : 30,
+            spriteSheetId : 2,
+            speed : 15,
+            hp : 50
+        });
+    }, 5000);
     
     graphics.drawStaticObjects();
     

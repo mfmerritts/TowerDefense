@@ -201,6 +201,8 @@ MyGame.graphics = (function() {
         context.restore();
     };
     
+
+    
     var imageList = [];
     imageList.push({
         imageId : 'BG',
@@ -224,13 +226,49 @@ MyGame.graphics = (function() {
         src: 'Scaffold/Images/FrostLevel1.png'
     });
     imageList.push({
-        imageId : 'C1',
-        src: 'Scaffold/Images/Creep1.png'
-    });
-    imageList.push({
         imageId : 'P1',
         src: 'Scaffold/Images/P1.jpg'
-    })
+    });
+    imageList.push({
+        imageId : 'Red1',
+        src: 'Scaffold/Images/Red1.png'
+    });
+    imageList.push({
+        imageId : 'Red2',
+        src: 'Scaffold/Images/Red2.png'
+    });
+    imageList.push({
+        imageId : 'Red3',
+        src: 'Scaffold/Images/Red3.png'
+    });
+    imageList.push({
+        imageId : 'Red4',
+        src: 'Scaffold/Images/Red4.png'
+    });
+    imageList.push({
+        imageId : 'Red5',
+        src: 'Scaffold/Images/Red5.png'
+    });
+    imageList.push({
+        imageId : 'Red6',
+        src: 'Scaffold/Images/Red6.png'
+    });
+    imageList.push({
+        imageId : 'Yellow1',
+        src: 'Scaffold/Images/Yellow1.png'
+    });
+    imageList.push({
+        imageId : 'Yellow2',
+        src: 'Scaffold/Images/Yellow2.png'
+    });
+    imageList.push({
+        imageId : 'Yellow3',
+        src: 'Scaffold/Images/Yellow3.png'
+    });
+    imageList.push({
+        imageId : 'Yellow4',
+        src: 'Scaffold/Images/Yellow4.png'
+    });
     loadImages(imageList);
     
     canvas.addEventListener('mousemove', function (evt) {
