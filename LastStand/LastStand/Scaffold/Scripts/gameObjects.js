@@ -56,14 +56,14 @@
             
             for (var i = 0; i < itemsInGrid.length; ++i) {
                 if (itemsInGrid[i] !== projectile.id) {
-                    var object1 = { x: projectile.position.x, y: projectile.position.y, radius: projectile.size },
+                    var object1 = { x: projectile.position.x, y: projectile.position.y, radius: projectile.size / 2 },
                         item = gameObjects.getObject(itemsInGrid[i]);
                     if (item && item.isCreep) {
-                        var object2 = { x: item.position.x, y: item.position.y, radius: item.size };
+                        var object2 = { x: item.position.x, y: item.position.y, radius: item.size / 2 };
                         
                         if (circleCollisionDetection(object1, object2)) {
                             item.hp -= projectile.damage;
-                            console.log('Creep hit! ' + item.hp + ' hp remaining');
+                            //console.log('Creep hit! ' + item.hp + ' hp remaining');
                             if (item.hp <= 0) {
                                 gameObjects.remove(item.id);
                             }
@@ -276,8 +276,8 @@
         that.update = function (elapsedTime) {
             var movementX = speed * (elapsedTime / 1000) * direction.x,
                 movementY = speed * (elapsedTime / 1000) * direction.y,
-                lastCollisionGridX = Math.floor(that.position.x / 50),
-                lastCollisionGridY = Math.floor(that.position.y / 50);
+                lastCollisionGridX = Math.floor(that.position.x / 100),
+                lastCollisionGridY = Math.floor(that.position.y / 100);
             
             that.position.x += movementX;
             that.position.y += movementY;
@@ -380,10 +380,11 @@
     
     function Turret(spec) {
         var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .3;
+            defaultRotationSpeed = Math.PI * .3,
+            lastFiredElapsedTime = 0;
         
         that.imageId = 'T1';
-        that.fireRate = 1;
+        that.fireRate = .5;
         that.damage = 2;
         that.targetTypes = 2;
         that.radius = 100;
@@ -394,8 +395,19 @@
             if (that.targetId == -1) {
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
-                if (TrackTower(that, elapsedTime)) {
-                    //TODO: Fire
+                lastFiredElapsedTime += (elapsedTime / 1000);
+                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                    lastFiredElapsedTime = 0;
+                    
+                    Projectile({
+                        position : { x: that.position.x, y: that.position.y },
+                        size : 10,
+                        speed : 150,
+                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                        maxRange : that.radius,
+                        imageId : 'P1',
+                        damage : that.damage
+                    });
                 }
             }
         }
@@ -406,10 +418,11 @@
     
     function Missile(spec) {
         var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .75;
+            defaultRotationSpeed = Math.PI * .75,
+            lastFiredElapsedTime = 0;
         
         that.imageId = 'M1';
-        that.fireRate = .5;
+        that.fireRate = 1;
         that.damage = 5;
         that.targetTypes = 1;
         that.radius = 150;
@@ -420,8 +433,19 @@
             if (that.targetId == -1) {
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
-                if (TrackTower(that, elapsedTime)) {
-                    //TODO: Fire
+                lastFiredElapsedTime += (elapsedTime / 1000);
+                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                    lastFiredElapsedTime = 0;
+                    
+                    Projectile({
+                        position : { x: that.position.x, y: that.position.y },
+                        size : 10,
+                        speed : 100,
+                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                        maxRange : that.radius,
+                        imageId : 'P1',
+                        damage : that.damage
+                    });
                 }
             }
                 
@@ -437,8 +461,8 @@
             lastFiredElapsedTime = 0;
         
         that.imageId = 'B1';
-        that.fireRate = 2;
-        that.damage = 10;
+        that.fireRate = 3;
+        that.damage = 20;
         that.targetTypes = 0;
         that.radius = 250;
         that.targetId = -1;
@@ -455,7 +479,7 @@
                     Projectile({
                         position : { x: that.position.x, y: that.position.y },
                         size : 10,
-                        speed : 80,
+                        speed : 70,
                         direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                         maxRange : that.radius,
                         imageId : 'P1',
@@ -471,11 +495,12 @@
     
     function Frost(spec) {
         var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .5;
+            defaultRotationSpeed = Math.PI * .5,
+            lastFiredElapsedTime = 0;
         
         that.imageId = 'F1';
-        that.fireRate = 2;
-        that.damage = 3;
+        that.fireRate = 1;
+        that.damage = 5;
         that.targetTypes = 0;
         that.radius = 100;
         that.targetId = -1;
@@ -487,8 +512,19 @@
             if (that.targetId == -1) {
                 that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
             } else {
-                if (TrackTower(that, elapsedTime)) {
-                    //TODO: Fire
+                lastFiredElapsedTime += (elapsedTime / 1000);
+                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                    lastFiredElapsedTime = 0;
+                    
+                    Projectile({
+                        position : { x: that.position.x, y: that.position.y },
+                        size : 10,
+                        speed : 70,
+                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                        maxRange : that.radius,
+                        imageId : 'P1',
+                        damage : that.damage
+                    });
                 }
             }
                 
