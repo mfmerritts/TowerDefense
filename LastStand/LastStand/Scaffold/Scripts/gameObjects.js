@@ -12,20 +12,17 @@
     function SpriteObject(spec) {
         var that = {},
             imageIds = spec.imageIds,
-            imageElapsedTime = 0,
-            imageTimes = spec.imageTimes,
-            currentId = 0;
+            imageTimes = spec.imageTimes;
 
-        that.update = function (elapsedTime){
-            imageElapsedTime += elapsedTime;
-            if (imageElapsedTime >= imageTimes[currentId]) {
-                imageElapsedTime = 0;
-                currentId++;
-                if (currentId >= imageIds.length) {
-                    currentId = 0;
+        that.update = function (creep){
+            if (creep.imageElapsedTime >= imageTimes[creep.currentId]) {
+                creep.imageElapsedTime = 0;
+                creep.currentId++;
+                if (creep.currentId >= imageIds.length) {
+                    creep.currentId = 0;
                 }
             }
-            return imageIds[currentId];
+            return imageIds[creep.currentId];
         }
 
         return that;
@@ -99,6 +96,7 @@
                             item.hp -= projectile.damage;
                             //console.log('Creep hit! ' + item.hp + ' hp remaining');
                             if (item.hp <= 0) {
+                                /* Creep dies */
                                 gameObjects.remove(item.id);
                             }
                             gameObjects.remove(projectile.id);
@@ -277,7 +275,6 @@
         object.gridY = collisionGridY;
     }
     
-    
     function RemoveFromCollisionGrid(x, y, id) {
         if (x < 0) {
             x = 0;
@@ -348,11 +345,14 @@
         that.directionX;
         that.directionY;
         that.nextMove;
+        that.imageElapsedTime = 0,
+        that.currentId = 0;
         
         that.update = function (elapsedTime) {
             that.percentage = that.hp / originalHp;
             
-            that.imageId = sprites[spriteSheetId].update(elapsedTime);
+            that.imageElapsedTime += elapsedTime;
+            that.imageId = sprites[spriteSheetId].update(that);
             
             that.gridCoordX = Math.floor(that.position.x / 50);
             that.gridCoordY = Math.floor(that.position.y / 50);
@@ -405,6 +405,7 @@
             UpdateGrid(that, lastCollisionGridX, lastCollisionGridY);
             
             if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (800 + that.size / 2)) {
+                /* Creep escaped */
                 gameObjects.remove(that.id);
             }
         }
