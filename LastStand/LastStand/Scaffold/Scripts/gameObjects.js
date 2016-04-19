@@ -6,7 +6,7 @@
         towerGrid = [],
         collisionGrid = [],
         selectedTower = 0,
-        trackTargetRotationSpeed = Math.PI * .8,
+        trackTargetRotationSpeed = Math.PI,
         sprites = {};
     
     function SpriteObject(spec) {
@@ -36,7 +36,11 @@
         sprites[2] = SpriteObject({
             imageIds : ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4'],
             imageTimes : [200, 1000, 200, 600]
-        })
+        });
+        sprites[3] = SpriteObject({
+            imageIds : ['Blue1', 'Blue2', 'Blue3', 'Blue4'],
+            imageTimes : [1000, 200, 200, 200]
+        });
     }
     
     function GameObjects() {
@@ -90,17 +94,18 @@
                     var object1 = { x: projectile.position.x, y: projectile.position.y, radius: projectile.size / 2 },
                         item = gameObjects.getObject(itemsInGrid[i]);
                     if (item && item.isCreep) {
-                        var object2 = { x: item.position.x, y: item.position.y, radius: item.size / 2 };
-                        
-                        if (circleCollisionDetection(object1, object2)) {
-                            item.hp -= projectile.damage;
-                            //console.log('Creep hit! ' + item.hp + ' hp remaining');
-                            if (item.hp <= 0) {
-                                /* Creep dies */
-                                gameObjects.remove(item.id);
+                        if (ValidateTarget(item.isAir, projectile.targetTypes)) {
+                            var object2 = { x: item.position.x, y: item.position.y, radius: item.size / 2 };
+                            if (circleCollisionDetection(object1, object2)) {
+                                item.hp -= projectile.damage;
+                                //console.log('Creep hit! ' + item.hp + ' hp remaining');
+                                if (item.hp <= 0) {
+                                    /* Creep dies */
+                                    gameObjects.remove(item.id);
+                                }
+                                gameObjects.remove(projectile.id);
+                                return true;
                             }
-                            gameObjects.remove(projectile.id);
-                            return true;
                         }
                     }
                 }
@@ -216,16 +221,23 @@
             tower.targetId = -1;
             var objectList = gameObjects.getObjectList();
             for (var i = 0; i < objectList.length; ++i) {
+                /* target types: 0 = ground only, 1 = air only, 2 = both */
                 if (objectList[i].isCreep) {
-                    var creep = { x: objectList[i].position.x, y: objectList[i].position.y, radius: objectList[i].size / 2 };
-                    if (circleCollisionDetection(creep, thisTower)) {
-                        tower.targetId = objectList[i].id;
-                        break;
+                    if (ValidateTarget(objectList[i].isAir, tower.targetTypes)) {
+                        var creep = { x: objectList[i].position.x, y: objectList[i].position.y, radius: objectList[i].size / 2 };
+                        if (circleCollisionDetection(creep, thisTower)) {
+                            tower.targetId = objectList[i].id;
+                            break;
+                        }
                     }
                 }
             }
         }
     }
+    
+    function ValidateTarget(isAir, targetTypes){
+        return targetTypes === 2 || (isAir && targetTypes === 1) || (!isAir && targetTypes === 0);
+    };
     
     function GameObject(spec) {
         var that = {
@@ -301,6 +313,7 @@
             direction = spec.direction,
             maxRange = spec.maxRange;
         
+        that.targetTypes = spec.targetTypes;
         that.imageId = spec.imageId;
         that.damage = spec.damage;
         
@@ -340,6 +353,7 @@
         that.hp = spec.hp;
         that.percentage = 1;
         that.isCreep = true;
+        that.isAir = spriteSheetId == 3;
         that.gridCoordX;
         that.gridCoordY;
         that.directionX;
@@ -347,6 +361,12 @@
         that.nextMove;
         that.imageElapsedTime = 0,
         that.currentId = 0;
+        
+        //{ x: 325, y: 0 }
+        if (that.position.x === 325 && that.position.y === 0) {
+            that.directionX = 0;
+            that.directionY = 1;
+        }
         
         that.update = function (elapsedTime) {
             that.percentage = that.hp / originalHp;
@@ -362,35 +382,38 @@
                 gameObjects.remove(that.id);
                 return;
             }
-            that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
-            if (that.nextMove == null) {
-                return;
-            }
-            //console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
-            that.directionX = that.nextMove[1] - that.gridCoordX;
-            //console.log("that.directionX: " + that.directionX);
-            that.directionY = that.nextMove[0] - that.gridCoordY;
-            //console.log("that.directionY: " + that.directionY);
-            
-            //these helps the creep stay closer to the center of the square its in (x coords)
-            if (that.directionX == 0) {
-                var correction = that.position.x % (that.gridCoordX * 50);
-                if (correction > 30) {
-                    that.position.x -= that.speed * (elapsedTime / 1000);
+            if (!that.isAir) {
+                that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+                if (that.nextMove == null) {
+                    return;
                 }
-                if (correction < 20) {
-                    that.position.x += that.speed * (elapsedTime / 1000);
+                
+                //console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
+                that.directionX = that.nextMove[1] - that.gridCoordX;
+                //console.log("that.directionX: " + that.directionX);
+                that.directionY = that.nextMove[0] - that.gridCoordY;
+                //console.log("that.directionY: " + that.directionY);
+                
+                //these helps the creep stay closer to the center of the square its in (x coords)
+                if (that.directionX == 0) {
+                    var correction = that.position.x % (that.gridCoordX * 50);
+                    if (correction > 30) {
+                        that.position.x -= that.speed * (elapsedTime / 1000);
+                    }
+                    if (correction < 20) {
+                        that.position.x += that.speed * (elapsedTime / 1000);
+                    }
                 }
-            }
-            
-            //these helps the creep stay closer to the center of the square its in (y coords)
-            if (that.directionY == 0) {
-                var correction = that.position.y % (that.gridCoordY * 50);
-                if (correction > 30) {
-                    that.position.y -= that.speed * (elapsedTime / 1000);
-                }
-                if (correction < 20) {
-                    that.position.y += that.speed * (elapsedTime / 1000);
+                
+                //these helps the creep stay closer to the center of the square its in (y coords)
+                if (that.directionY == 0) {
+                    var correction = that.position.y % (that.gridCoordY * 50);
+                    if (correction > 30) {
+                        that.position.y -= that.speed * (elapsedTime / 1000);
+                    }
+                    if (correction < 20) {
+                        that.position.y += that.speed * (elapsedTime / 1000);
+                    }
                 }
             }
             
@@ -441,7 +464,8 @@
                         direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                         maxRange : that.radius,
                         imageId : 'P1',
-                        damage : that.damage
+                        damage : that.damage,
+                        targetTypes : that.targetTypes
                     });
                 }
             }
@@ -479,7 +503,8 @@
                         direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                         maxRange : that.radius,
                         imageId : 'P1',
-                        damage : that.damage
+                        damage : that.damage,
+                        targetTypes : that.targetTypes
                     });
                 }
             }
@@ -518,7 +543,8 @@
                         direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                         maxRange : that.radius,
                         imageId : 'P1',
-                        damage : that.damage
+                        damage : that.damage,
+                        targetTypes : that.targetTypes
                     });
                 }
             }
@@ -558,7 +584,8 @@
                         direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                         maxRange : that.radius,
                         imageId : 'P1',
-                        damage : that.damage
+                        damage : that.damage,
+                        targetTypes : that.targetTypes
                     });
                 }
             }
@@ -808,7 +835,7 @@
     
     //adds creep
     //needs to be replaced with a way to continuously introduce new creeps
-    setInterval(function () {
+   setInterval(function () {
         Creep({
             position : { x: 325, y: 0 },
             size : 30,
@@ -816,14 +843,23 @@
             speed : 30,
             hp : 30
         });
-    }, 3000);
+    }, 3000); 
+    setInterval(function () {
+        Creep({
+            position : { x: 325, y: 0 },
+            size : 30,
+            spriteSheetId : 3,
+            speed : 20,
+            hp : 60
+        });
+    }, 4000);
     setInterval(function () {
         Creep({
             position : { x: 325, y: 0 },
             size : 30,
             spriteSheetId : 2,
             speed : 15,
-            hp : 50
+            hp : 80
         });
     }, 5000);
     

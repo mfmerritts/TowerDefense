@@ -269,6 +269,22 @@ MyGame.graphics = (function() {
         imageId : 'Yellow4',
         src: 'Scaffold/Images/Yellow4.png'
     });
+    imageList.push({
+        imageId : 'Blue1',
+        src: 'Scaffold/Images/Blue1.png'
+    });
+    imageList.push({
+        imageId : 'Blue2',
+        src: 'Scaffold/Images/Blue2.png'
+    });
+    imageList.push({
+        imageId : 'Blue3',
+        src: 'Scaffold/Images/Blue3.png'
+    });
+    imageList.push({
+        imageId : 'Blue4',
+        src: 'Scaffold/Images/Blue4.png'
+    });
     loadImages(imageList);
     
     canvas.addEventListener('mousemove', function (evt) {
