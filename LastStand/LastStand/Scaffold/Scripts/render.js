@@ -9,6 +9,18 @@ MyGame.graphics = (function() {
         mouseX = 0,
         mouseY = 0;
     
+    function drawMoneyFloat(ar){
+        if (ar.length != 0) {
+            for (var a = 0; a < ar.length; a++) {
+                context.save();
+                context.font = "12px Arial";
+                context.fillText("+ $" + ar[a][2], ar[a][0] - 5, ar[a][1] - 5);
+                ar[a][1] -= 0.2;
+                context.restore();
+            }
+        }
+    }
+
     function drawMoney(money, score){
         context.save();
         context.font = "12px Arial";
@@ -312,6 +324,7 @@ MyGame.graphics = (function() {
         clearCanvas : clearCanvas,
         drawGrid : drawGrid,
         drawStaticObjects : drawStaticObjects,
-        drawMoney : drawMoney
+        drawMoney : drawMoney, 
+        drawMoneyFloat: drawMoneyFloat
 	};
 }());

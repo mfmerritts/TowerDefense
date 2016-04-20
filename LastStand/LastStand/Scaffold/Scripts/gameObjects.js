@@ -12,6 +12,11 @@
         scoreTotal = 0,
         renderEvent = [];
     
+    function triggerScoreEvent(x, y, worth){
+        console.log(worth + " : " + x + " , " + y);
+        renderEvent.push([x, y, worth, 100]);
+    }
+    
     function SpriteObject(spec) {
         var that = {},
             imageIds = spec.imageIds,
@@ -110,6 +115,7 @@
                                     moneyEarned += item.worth;
                                     scoreTotal += item.worth * 2;
                                     gameObjects.remove(item.id);
+                                    triggerScoreEvent(item.position.x, item.position.y, item.worth);
                                 }
                                 RemoveFromCollisionGrid(projectile.gridX, projectile.gridY, projectile.id);
                                 gameObjects.remove(projectile.id);
@@ -713,13 +719,20 @@
             objectList[i].update(elapsedTime);
         }
         particleSystem.update(elapsedTime);
+        for (var a = 0; a < renderEvent.length; ++a) {
+            renderEvent[a][3] -= 1;
+            if (renderEvent[a][3] <= 0) {
+                renderEvent.splice(a, 1);
+            }
+        }  
     }
     
     function RenderAll() {
         graphics.clearCanvas();
         graphics.drawStaticObjects();
         graphics.drawMoney(moneyEarned, scoreTotal);
-        
+        graphics.drawMoneyFloat(renderEvent);
+
         if (towerGridActive) {
             graphics.drawGrid({
                 grid : towerGrid,
