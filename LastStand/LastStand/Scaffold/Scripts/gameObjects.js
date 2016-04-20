@@ -7,7 +7,10 @@
         collisionGrid = [],
         selectedTower = 0,
         trackTargetRotationSpeed = Math.PI,
-        sprites = {};
+        sprites = {},
+        moneyEarned = 0,
+        scoreTotal = 0,
+        renderEvent = [];
     
     function SpriteObject(spec) {
         var that = {},
@@ -101,6 +104,8 @@
                                 //console.log('Creep hit! ' + item.hp + ' hp remaining');
                                 if (item.hp <= 0) {
                                     /* Creep dies */
+                                    moneyEarned += item.worth;
+                                    scoreTotal += item.worth * 2;
                                     gameObjects.remove(item.id);
                                 }
                                 gameObjects.remove(projectile.id);
@@ -136,9 +141,29 @@
                             if ((rows == 0) && (items == 6)) {
                                 return false;
                             }
+                            //don't allow placement of tower at 13, 6
+                            if ((rows == 13) && (items == 6)) {
+                                return false;
+                            }
+                            //don't allow placement of tower at 6, 0
+                            if ((rows == 6) && (items == 0)) {
+                                return false;
+                            }
+                            //don't allow placement of tower at 6, 13
+                            if ((rows == 6) && (items == 13)) {
+                                return false;
+                            }
+
                             towerGrid[rows][items] = 1;
-                            var temp2 = findShortestTopToBottom(0, 6);
+                            //no horizontal blocks
+                            var temp2 = findShortestTopToBottom(6, 0);
                             if (temp2 == null) {
+                                towerGrid[rows][items] = 0;
+                                return false;
+                            }
+                            //no vertical blocks
+                            var temp3 = findShortestLeftToRight(0, 6);
+                            if (temp3 == null) {
                                 towerGrid[rows][items] = 0;
                                 return false;
                             }
@@ -149,7 +174,19 @@
                                 if (objectList[i].isCreep) {
                                     //console.log("checking!");
                                     var temp = null;
-                                    temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    var destinationCollecter = objectList[i].destination;
+                                    if (destinationCollecter == "bottom") {
+                                        temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    }
+                                    if (destinationCollecter == "top") {
+                                        temp = findShortestBottomToTop(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    }
+                                    if (destinationCollecter == "right") {
+                                        temp = findShortestLeftToRight(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    }
+                                    if (destinationCollecter == "left") {
+                                        temp = findShortestRightToLeft(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    }
                                     if (temp == null) {
                                         towerGrid[rows][items] = 0;
                                         return false;
@@ -158,9 +195,6 @@
 
                                 }
                             }
-                            //uncomment lines below to dipslay shortest paths
-                            //findShortestLeftToRight();
-                            //findShortestTopToBottom();
                             var tower = gameObjects.getObject(selectedTower);
                             tower.useMouse = false;
                             tower.position = { x: dx + 25, y: dy + 25 };
@@ -341,7 +375,7 @@
         gameObjects.add(that);
     }
     
-    function Creep(spec) {
+    function Creep(spec, des) {
         var that = GameObject(spec),
             originalHp = spec.hp,
             spriteSheetId = spec.spriteSheetId;
@@ -361,11 +395,39 @@
         that.nextMove;
         that.imageElapsedTime = 0,
         that.currentId = 0;
+        that.destination = des;
+        if (spec.spriteSheetId == 1) {
+            that.worth = 10;
+        }
+        if (spec.spriteSheetId == 2) {
+            that.worth = 20;
+        }
+        if (spec.spriteSheetId == 3) {
+            that.worth = 15;
+        }
         
-        //{ x: 325, y: 0 }
-        if (that.position.x === 325 && that.position.y === 0) {
+        //for fly creeps going top
+        if (that.destination == "top") {
+            that.directionX = 0;
+            that.directionY = -1;
+        }
+        
+        //for fly creeps going bottom
+        if (that.destination == "bottom") {
             that.directionX = 0;
             that.directionY = 1;
+        }
+        
+        //for fly creeps going east
+        if (that.destination == "right") {
+            that.directionX = 1;
+            that.directionY = 0;
+        }
+        
+        //for fly creeps going west
+        if (that.destination == "left") {
+            that.directionX = -1;
+            that.directionY = 0;
         }
         
         that.update = function (elapsedTime) {
@@ -377,13 +439,55 @@
             that.gridCoordX = Math.floor(that.position.x / 50);
             that.gridCoordY = Math.floor(that.position.y / 50);
             //console.log("current loc: " + that.gridCoordX + " " + that.gridCoordY);
-            if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
-                //this is the code that handles the removal of this object
-                gameObjects.remove(that.id);
-                return;
-            }
+            
+            //object is not air so its movements vary based on tower locations
             if (!that.isAir) {
-                that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+
+                //handles creeps going south
+                if (that.destination == "bottom") {
+                    //creep reached the bottom of map and needs to be removed
+                    if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
+                        //this is the code that handles the removal of this object
+                        gameObjects.remove(that.id);
+                        return;
+                    }
+                    that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+                }
+
+                //handles creeps going north
+                if (that.destination == "top") {
+                    that.nextMove = findShortestBottomToTop(that.gridCoordX, that.gridCoordY)
+                    //creep reached the top of map and need to be removed
+                    if ((that.gridCoordX == 6) && (that.gridCoordY == -2)) {
+                        //this is the code that handles the removal of this object
+                        gameObjects.remove(that.id);
+                        return;
+                    }
+                }
+                
+                //handles creeps going east
+                if (that.destination == "right") {
+                    that.nextMove = findShortestLeftToRight(that.gridCoordX, that.gridCoordY)
+                    //creep reached the top of map and need to be removed
+                    if ((that.gridCoordX == 14) && (that.gridCoordY == 6)) {
+                        //this is the code that handles the removal of this object
+                        gameObjects.remove(that.id);
+                        return;
+                    }
+                }
+                
+                //handles creeps going west
+                if (that.destination == "left") {
+                    that.nextMove = findShortestRightToLeft(that.gridCoordX, that.gridCoordY)
+                    //creep reached the top of map and need to be removed
+                    if ((that.gridCoordX == -2) && (that.gridCoordY == 6)) {
+                        //this is the code that handles the removal of this object
+                        gameObjects.remove(that.id);
+                        return;
+                    }
+                }
+                
+                //if a creeps next move is null there is no reason to do anything else
                 if (that.nextMove == null) {
                     return;
                 }
@@ -427,8 +531,9 @@
             
             UpdateGrid(that, lastCollisionGridX, lastCollisionGridY);
             
-            if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (800 + that.size / 2)) {
+            if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (700 + that.size / 2)) {
                 /* Creep escaped */
+                //console.log("removed " + that.id);
                 gameObjects.remove(that.id);
             }
         }
@@ -607,6 +712,7 @@
     function RenderAll() {
         graphics.clearCanvas();
         graphics.drawStaticObjects();
+        graphics.drawMoney(moneyEarned, scoreTotal);
         
         if (towerGridActive) {
             graphics.drawGrid({
@@ -642,14 +748,14 @@
     function findShortestTopToBottom(currentX, currentY) {
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 6) && (currentY == 13)) {
+            //console.log("special case 1");
             return [14, 6];
-            console.log("special case");
         }
         //the creep is offically off the grid, but still appears on the screen
         //the code below continues the animation so the creep will move off the screen completely 
         if ((currentX == 6) && (currentY == 14)) {
+            //console.log("special case 2");
             return [15, 6];
-            console.log("special case");
         }
         //creates a new 2d array of objects that are used for BFS
         //searchArray contains the objects that correspond to towerGrid array
@@ -732,10 +838,22 @@
         return pathArray[1];
     }
     
-    function findShortestLeftToRight() {
+    function findShortestBottomToTop(currentX, currentY) {
+        //this code is when the creep has made it to the final square and now needs to exit the game
+        if ((currentX == 6) && (currentY == 0)) {
+            //console.log("special case 1");
+            return [-1, 6];
+        }
+        //the creep is offically off the grid, but still appears on the screen
+        //the code below continues the animation so the creep will move off the screen completely 
+        if ((currentX == 6) && (currentY == -1)) {
+            //console.log("special case 2");
+            return [-2, 6];
+        }
         //creates a new 2d array of objects that are used for BFS
         //searchArray contains the objects that correspond to towerGrid array
         var searchArry = [];
+        var pathArray = [];
         for (var x = 0; x < towerGrid.length; x++) {
             var temp = [];
             for (var y = 0; y < towerGrid[x].length; y++) {
@@ -747,8 +865,8 @@
         
         //this is where the BFS happens
         var searchQueue = [];
-        searchArry[6][0].dis = 0;
-        searchQueue.push(searchArry[6][0]);
+        searchArry[currentY][currentX].dis = 0; // it looks like its backwards for the x and y here but its not
+        searchQueue.push(searchArry[currentY][currentX]);
         while (searchQueue.length != 0) {
             var node = searchQueue[0];
             searchQueue.splice(0, 1);
@@ -796,15 +914,208 @@
             }
         }
         
+        pathArray.push([0, 6]);
         //output of shortest path to endNode
-        var endNode = searchArry[6][13];
-        console.log("shortest path to [6][13] is...");
+        var endNode = searchArry[0][6];
+        if (endNode.pre == "null") {
+            //this is stuff happens if a creep's path had been blocked
+            return null;
+        }
+        //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
+        //return next array to move to 
+        return pathArray[1];
     }
     
+    function findShortestLeftToRight(currentX, currentY) {
+        //this code is when the creep has made it to the final square and now needs to exit the game
+        if ((currentX == 13) && (currentY == 6)) {
+            //console.log("special case 1");
+            return [6, 14];
+        }
+        //the creep is offically off the grid, but still appears on the screen
+        //the code below continues the animation so the creep will move off the screen completely 
+        if ((currentX == 14) && (currentY == 6)) {
+            //console.log("special case 2");
+            return [6, 15];
+        }
+        //creates a new 2d array of objects that are used for BFS
+        //searchArray contains the objects that correspond to towerGrid array
+        var searchArry = [];
+        var pathArray = [];
+        for (var x = 0; x < towerGrid.length; x++) {
+            var temp = [];
+            for (var y = 0; y < towerGrid[x].length; y++) {
+                var node = { posX: x, posY: y, pre: "null", visited: false, dis: 1000000 };
+                temp.push(node);
+            }
+            searchArry.push(temp);
+        }
+        
+        //this is where the BFS happens
+        var searchQueue = [];
+        searchArry[currentY][currentX].dis = 0; // it looks like its backwards for the x and y here but its not
+        searchQueue.push(searchArry[currentY][currentX]);
+        while (searchQueue.length != 0) {
+            var node = searchQueue[0];
+            searchQueue.splice(0, 1);
+            node.visited = true;
+            if (node.posX + 1 <= 13) {
+                //check down
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                    if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX + 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX + 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posX - 1 >= 0) {
+                //check up
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                    if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX - 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX - 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posY + 1 <= 13) {
+                //check right
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                    if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY + 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY + 1]);
+                    }
+                }
+            }
+            if (node.posY - 1 >= 0) {
+                //check left
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                    if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY - 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY - 1]);
+                    }
+                   
+                }
+            }
+        }
+        
+        pathArray.push([6, 13]);
+        //output of shortest path to endNode
+        var endNode = searchArry[6][13];
+        if (endNode.pre == "null") {
+            //this is stuff happens if a creep's path had been blocked
+            return null;
+        }
+        //console.log("shortest path to [13][6] is...");
+        while (endNode.pre != "null") {
+            endNode = endNode.pre;
+            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
+        }
+        //return next array to move to 
+        return pathArray[1];
+    }
+    
+    function findShortestRightToLeft(currentX, currentY) {
+        //this code is when the creep has made it to the final square and now needs to exit the game
+        if ((currentX == 0) && (currentY == 6)) {
+            //console.log("special case 1");
+            return [6, -1];
+        }
+        //the creep is offically off the grid, but still appears on the screen
+        //the code below continues the animation so the creep will move off the screen completely 
+        if ((currentX == -1) && (currentY == 6)) {
+            //console.log("special case 2");
+            return [6, -2];
+        }
+        //creates a new 2d array of objects that are used for BFS
+        //searchArray contains the objects that correspond to towerGrid array
+        var searchArry = [];
+        var pathArray = [];
+        for (var x = 0; x < towerGrid.length; x++) {
+            var temp = [];
+            for (var y = 0; y < towerGrid[x].length; y++) {
+                var node = { posX: x, posY: y, pre: "null", visited: false, dis: 1000000 };
+                temp.push(node);
+            }
+            searchArry.push(temp);
+        }
+        
+        //this is where the BFS happens
+        var searchQueue = [];
+        searchArry[currentY][currentX].dis = 0; // it looks like its backwards for the x and y here but its not
+        searchQueue.push(searchArry[currentY][currentX]);
+        while (searchQueue.length != 0) {
+            var node = searchQueue[0];
+            searchQueue.splice(0, 1);
+            node.visited = true;
+            if (node.posX + 1 <= 13) {
+                //check down
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                    if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX + 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX + 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posX - 1 >= 0) {
+                //check up
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                    if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
+                        searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
+                        searchArry[node.posX - 1][node.posY].pre = node;
+                        searchQueue.push(searchArry[node.posX - 1][node.posY]);
+                    }
+                }
+            }
+            if (node.posY + 1 <= 13) {
+                //check right
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                    if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY + 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY + 1]);
+                    }
+                }
+            }
+            if (node.posY - 1 >= 0) {
+                //check left
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                    if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
+                        searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
+                        searchArry[node.posX][node.posY - 1].pre = node;
+                        searchQueue.push(searchArry[node.posX][node.posY - 1]);
+                    }
+                   
+                }
+            }
+        }
+        
+        pathArray.push([6, 0]);
+        //output of shortest path to endNode
+        var endNode = searchArry[6][0];
+        if (endNode.pre == "null") {
+            //this is stuff happens if a creep's path had been blocked
+            return null;
+        }
+        //console.log("shortest path to [6][0] is...");
+        while (endNode.pre != "null") {
+            endNode = endNode.pre;
+            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
+            pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
+        }
+        //return next array to move to 
+        return pathArray[1];
+    }
     
     /* Initialize */
     gameObjects = GameObjects();
@@ -837,30 +1148,30 @@
     //needs to be replaced with a way to continuously introduce new creeps
    setInterval(function () {
         Creep({
-            position : { x: 325, y: 0 },
+            position : { x: 325, y: 699 },
             size : 30,
             spriteSheetId : 1,
             speed : 30,
             hp : 30
-        });
+        }, "top");
     }, 3000); 
     setInterval(function () {
         Creep({
-            position : { x: 325, y: 0 },
+            position : { x: 0, y: 325 },
             size : 30,
             spriteSheetId : 3,
             speed : 20,
             hp : 60
-        });
+        }, "right");
     }, 4000);
     setInterval(function () {
         Creep({
-            position : { x: 325, y: 0 },
+            position : { x: 699, y: 325 },
             size : 30,
             spriteSheetId : 2,
             speed : 15,
             hp : 80
-        });
+        }, "left");
     }, 5000);
     
     graphics.drawStaticObjects();

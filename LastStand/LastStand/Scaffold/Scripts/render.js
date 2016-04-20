@@ -9,6 +9,14 @@ MyGame.graphics = (function() {
         mouseX = 0,
         mouseY = 0;
     
+    function drawMoney(money, score){
+        context.save();
+        context.font = "12px Arial";
+        context.fillText("$: " + money, 715, 600);
+        context.fillText("Score: " + score, 715, 625);
+        context.restore();
+    }
+    
     function getMousePos(canvas, evt) {
         var rect = canvas.getBoundingClientRect();
         mouseX = evt.clientX - rect.left;
@@ -299,6 +307,7 @@ MyGame.graphics = (function() {
         drawGameObject : drawGameObject,
         clearCanvas : clearCanvas,
         drawGrid : drawGrid,
-        drawStaticObjects : drawStaticObjects
+        drawStaticObjects : drawStaticObjects,
+        drawMoney : drawMoney
 	};
 }());
