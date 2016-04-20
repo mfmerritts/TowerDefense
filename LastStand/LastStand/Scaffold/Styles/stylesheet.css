@@ -1,6 +1,6 @@
 .screen {
     display: none;
-    padding-top: 100px;
+    padding-top: 25px;
 }
 
 .screen.active {
