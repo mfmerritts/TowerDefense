@@ -1,4 +1,4 @@
-﻿MyGame.GameObjects = (function (graphics) {
+﻿MyGame.GameObjects = (function (graphics, particleSystem) {
     'use strict';
     
     var gameObjects = {},
@@ -104,6 +104,9 @@
                                 //console.log('Creep hit! ' + item.hp + ' hp remaining');
                                 if (item.hp <= 0) {
                                     /* Creep dies */
+                                    particleSystem.CreepDeathExplosion({
+                                        center: { x: item.position.x, y: item.position.y }
+                                    });
                                     moneyEarned += item.worth;
                                     scoreTotal += item.worth * 2;
                                     gameObjects.remove(item.id);
@@ -176,7 +179,7 @@
                                     var temp = null;
                                     var destinationCollecter = objectList[i].destination;
                                     if (destinationCollecter == "bottom") {
-                                        temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                    temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
                                     }
                                     if (destinationCollecter == "top") {
                                         temp = findShortestBottomToTop(objectList[i].gridCoordX, objectList[i].gridCoordY);
@@ -446,12 +449,12 @@
                 //handles creeps going south
                 if (that.destination == "bottom") {
                     //creep reached the bottom of map and needs to be removed
-                    if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
-                        //this is the code that handles the removal of this object
-                        gameObjects.remove(that.id);
-                        return;
-                    }
-                    that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+            if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
+                //this is the code that handles the removal of this object
+                gameObjects.remove(that.id);
+                return;
+            }
+                that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
                 }
 
                 //handles creeps going north
@@ -707,6 +710,7 @@
         for (var i = 0; i < objectList.length; ++i) {
             objectList[i].update(elapsedTime);
         }
+        particleSystem.update(elapsedTime);
     }
     
     function RenderAll() {
@@ -735,6 +739,8 @@
                 towerGridActive : towerGridActive
             });
         }
+
+        particleSystem.render();
     }
     
     function circleCollisionDetection(circle1, circle2) {
@@ -1097,9 +1103,9 @@
                     }
                    
                 }
-            }
         }
-        
+    }
+    
         pathArray.push([6, 0]);
         //output of shortest path to endNode
         var endNode = searchArry[6][0];
@@ -1189,4 +1195,4 @@
         PlaceTower : PlaceTower
     };
 
-}(MyGame.graphics));
+}(MyGame.graphics, MyGame.particles));

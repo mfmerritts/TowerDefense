@@ -90,7 +90,7 @@ MyGame.graphics = (function() {
         context.translate(-particle.center.x, -particle.center.y);
         
         context.drawImage(
-            particle.image, 
+            images[particle.imageId], 
             particle.center.x - particle.size/2, 
             particle.center.y - particle.size/2,
             particle.size, particle.size);
@@ -292,6 +292,10 @@ MyGame.graphics = (function() {
     imageList.push({
         imageId : 'Blue4',
         src: 'Scaffold/Images/Blue4.png'
+    });
+    imageList.push({
+        imageId : 'Fire',
+        src: 'Scaffold/Images/fire.png'
     });
     loadImages(imageList);
     
