@@ -101,9 +101,9 @@
                             var object2 = { x: item.position.x, y: item.position.y, radius: item.size / 2 };
                             if (circleCollisionDetection(object1, object2)) {
                                 item.hp -= projectile.damage;
-                                //console.log('Creep hit! ' + item.hp + ' hp remaining');
                                 if (item.hp <= 0) {
                                     /* Creep dies */
+                                    RemoveFromCollisionGrid(item.gridX, item.gridX, item.id);
                                     particleSystem.CreepDeathExplosion({
                                         center: { x: item.position.x, y: item.position.y }
                                     });
@@ -111,6 +111,7 @@
                                     scoreTotal += item.worth * 2;
                                     gameObjects.remove(item.id);
                                 }
+                                RemoveFromCollisionGrid(projectile.gridX, projectile.gridY, projectile.id);
                                 gameObjects.remove(projectile.id);
                                 return true;
                             }
