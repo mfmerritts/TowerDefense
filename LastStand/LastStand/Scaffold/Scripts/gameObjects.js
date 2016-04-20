@@ -371,6 +371,7 @@
                 distanceTraveled += movementX + movementY;
                 
                 if (!gameObjects.detectCollisions(that) && distanceTraveled >= maxRange) {
+                    RemoveFromCollisionGrid(that.gridX, that.gridY, that.id);
                     gameObjects.remove(that.id);
                 }
             }
@@ -537,7 +538,7 @@
             
             if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (700 + that.size / 2)) {
                 /* Creep escaped */
-                //console.log("removed " + that.id);
+                RemoveFromCollisionGrid(that.gridX, that.gridY, that.id);
                 gameObjects.remove(that.id);
             }
         }
