@@ -91,7 +91,6 @@ MyGame.screens['game-play'] = (function (game) {
     }
     
     function update(elapsedTime) {
-        //game.particleSystem.update(elapsedTime);
         game.gameObjects.UpdateAll(elapsedTime);
     }
     

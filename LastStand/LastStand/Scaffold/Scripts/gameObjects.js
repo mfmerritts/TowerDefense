@@ -1,4 +1,4 @@
-﻿MyGame.GameObjects = (function (graphics) {
+﻿MyGame.GameObjects = (function (graphics, particleSystem) {
     'use strict';
     
     var gameObjects = {},
@@ -101,6 +101,9 @@
                                 //console.log('Creep hit! ' + item.hp + ' hp remaining');
                                 if (item.hp <= 0) {
                                     /* Creep dies */
+                                    particleSystem.CreepDeathExplosion({
+                                        center: { x: item.position.x, y: item.position.y }
+                                    });
                                     gameObjects.remove(item.id);
                                 }
                                 gameObjects.remove(projectile.id);
@@ -602,6 +605,7 @@
         for (var i = 0; i < objectList.length; ++i) {
             objectList[i].update(elapsedTime);
         }
+        particleSystem.update(elapsedTime);
     }
     
     function RenderAll() {
@@ -629,6 +633,8 @@
                 towerGridActive : towerGridActive
             });
         }
+
+        particleSystem.render();
     }
     
     function circleCollisionDetection(circle1, circle2) {
@@ -878,4 +884,4 @@
         PlaceTower : PlaceTower
     };
 
-}(MyGame.graphics));
+}(MyGame.graphics, MyGame.particles));

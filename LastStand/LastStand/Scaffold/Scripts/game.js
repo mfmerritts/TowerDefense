@@ -1,4 +1,4 @@
-MyGame.game = (function(screens, input, particles, gameObjects) {
+MyGame.game = (function(screens, input, gameObjects) {
 	'use strict';
     
     var keyBoard = input.Keyboard();
@@ -42,7 +42,6 @@ MyGame.game = (function(screens, input, particles, gameObjects) {
         showScreen : showScreen,
         registerControls : registerControls,
         updateKeyboard : updateKeyboard,
-        particleSystem : particles,
         gameObjects : gameObjects
 	};
-}(MyGame.screens, MyGame.input, MyGame.particles, MyGame.GameObjects));
+}(MyGame.screens, MyGame.input, MyGame.GameObjects));
