@@ -767,6 +767,9 @@
     }
     
     function findShortestTopToBottom(currentX, currentY) {
+        if ((currentX === undefined)||(currentY === undefined)) {
+            return null;
+        }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 6) && (currentY == 13)) {
             //console.log("special case 1");
@@ -860,6 +863,9 @@
     }
     
     function findShortestBottomToTop(currentX, currentY) {
+        if ((currentX === undefined) || (currentY === undefined)) {
+            return null;
+        }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 6) && (currentY == 0)) {
             //console.log("special case 1");
@@ -953,6 +959,9 @@
     }
     
     function findShortestLeftToRight(currentX, currentY) {
+        if ((currentX === undefined) || (currentY === undefined)) {
+            return null;
+        }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 13) && (currentY == 6)) {
             //console.log("special case 1");
@@ -1046,6 +1055,9 @@
     }
     
     function findShortestRightToLeft(currentX, currentY) {
+        if ((currentX === undefined) || (currentY === undefined)) {
+            return null;
+        }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 0) && (currentY == 6)) {
             //console.log("special case 1");
