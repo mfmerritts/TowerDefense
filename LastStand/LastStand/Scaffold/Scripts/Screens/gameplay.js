@@ -17,7 +17,7 @@ MyGame.screens['game-play'] = (function (game) {
     
     function escapeKey(){
         if (newTower != 0) {
-            game.gameObjects.DeleteSelectedTower();
+            game.gameObjects.DeleteSelectedTower(true);
             game.gameObjects.ToggleTowerGrid();
             newTower = 0;
         }
@@ -52,10 +52,11 @@ MyGame.screens['game-play'] = (function (game) {
         }
         
         if (newTower != 0 && oldTowerId == 0) {
-            game.gameObjects.ToggleTowerGrid();
-            createNewTower();
+            if (createNewTower()) {
+                game.gameObjects.ToggleTowerGrid();
+            }
         } else if (newTower != 0 && oldTowerId != newTower) {
-            game.gameObjects.DeleteSelectedTower();
+            game.gameObjects.DeleteSelectedTower(true);
             createNewTower();
         }
     }
@@ -63,27 +64,27 @@ MyGame.screens['game-play'] = (function (game) {
     function createNewTower() {
         switch (newTower) {
             case 1:
-                game.gameObjects.Turret({
+                return game.gameObjects.Turret({
                     useMouse : true,
                     size : 40
                 });
-                break;
-            case 2: game.gameObjects.Missile({
+            case 2:
+                return game.gameObjects.Missile({
                     useMouse : true,
                     size : 40
                 });
-                break;
-            case 3: game.gameObjects.Bomb({
+            case 3:
+                return game.gameObjects.Bomb({
                     useMouse : true,
                     size : 40
                 });
-                break;
-            case 4: game.gameObjects.Frost({
+            case 4:
+                return game.gameObjects.Frost({
                     useMouse : true,
                     size : 40
                 });
-                break;
         }
+        return false;
     }
     
     function render(elapsedTime) {

@@ -309,7 +309,11 @@
         return that;
     };
     
-    function DeleteSelectedTower() {
+    function DeleteSelectedTower(refund) {
+        var item = gameObjects.getObject(selectedTower);
+        if (item.value && refund) {
+            moneyEarned += item.value;
+        }
         gameObjects.remove(selectedTower);
         selectedTower = 0;
     }
@@ -553,164 +557,184 @@
     }
     
     function Turret(spec) {
-        var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .3,
-            lastFiredElapsedTime = 0;
-        
-        that.imageId = 'T1';
-        that.fireRate = .25;
-        that.damage = 3;
-        that.targetTypes = 2;
-        that.radius = 100;
-        that.targetId = -1;
-        
-        that.update = function (elapsedTime) {
-            findTarget(that);
-            if (that.targetId == -1) {
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
-            } else {
-                lastFiredElapsedTime += (elapsedTime / 1000);
-                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
-                    lastFiredElapsedTime = 0;
-                    
-                    Projectile({
-                        position : { x: that.position.x, y: that.position.y },
-                        size : 10,
-                        speed : 150,
-                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
-                        maxRange : that.radius,
-                        imageId : 'P1',
-                        damage : that.damage,
-                        targetTypes : that.targetTypes
-                    });
+        if (moneyEarned >= 100) {
+            moneyEarned -= 100;
+            var that = GameObject(spec),
+                defaultRotationSpeed = Math.PI * .3,
+                lastFiredElapsedTime = 0;
+            
+            that.imageId = 'T1';
+            that.fireRate = .25;
+            that.damage = 3;
+            that.targetTypes = 2;
+            that.radius = 100;
+            that.targetId = -1;
+            that.value = 100;
+            
+            that.update = function (elapsedTime) {
+                findTarget(that);
+                if (that.targetId == -1) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                } else {
+                    lastFiredElapsedTime += (elapsedTime / 1000);
+                    if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                        lastFiredElapsedTime = 0;
+                        
+                        Projectile({
+                            position : { x: that.position.x, y: that.position.y },
+                            size : 10,
+                            speed : 150,
+                            direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                            maxRange : that.radius,
+                            imageId : 'P1',
+                            damage : that.damage,
+                            targetTypes : that.targetTypes
+                        });
+                    }
                 }
             }
-        }
-        
-        gameObjects.add(that);
-        selectedTower = that.id;
+            
+            gameObjects.add(that);
+            selectedTower = that.id;
+            return true;
+        } else { return false; }
     }
     
     function Missile(spec) {
-        var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .75,
-            lastFiredElapsedTime = 0;
-        
-        that.imageId = 'M1';
-        that.fireRate = 1;
-        that.damage = 5;
-        that.targetTypes = 1;
-        that.radius = 150;
-        that.targetId = -1;
-        
-        that.update = function (elapsedTime) {
-            findTarget(that);
-            if (that.targetId == -1) {
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
-            } else {
-                lastFiredElapsedTime += (elapsedTime / 1000);
-                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
-                    lastFiredElapsedTime = 0;
-                    
-                    Projectile({
-                        position : { x: that.position.x, y: that.position.y },
-                        size : 10,
-                        speed : 100,
-                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
-                        maxRange : that.radius,
-                        imageId : 'P1',
-                        damage : that.damage,
-                        targetTypes : that.targetTypes
-                    });
+        if (moneyEarned >= 150) {
+            moneyEarned -= 150;
+            var that = GameObject(spec),
+                defaultRotationSpeed = Math.PI * .75,
+                lastFiredElapsedTime = 0;
+            
+            that.imageId = 'M1';
+            that.fireRate = 1;
+            that.damage = 5;
+            that.targetTypes = 1;
+            that.radius = 150;
+            that.targetId = -1;
+            that.value = 150;
+            
+            that.update = function (elapsedTime) {
+                findTarget(that);
+                if (that.targetId == -1) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                } else {
+                    lastFiredElapsedTime += (elapsedTime / 1000);
+                    if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                        lastFiredElapsedTime = 0;
+                        
+                        Projectile({
+                            position : { x: that.position.x, y: that.position.y },
+                            size : 10,
+                            speed : 100,
+                            direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                            maxRange : that.radius,
+                            imageId : 'P1',
+                            damage : that.damage,
+                            targetTypes : that.targetTypes
+                        });
+                    }
                 }
-            }
                 
-        }
-        
-        gameObjects.add(that);
-        selectedTower = that.id;
+            }
+            
+            gameObjects.add(that);
+            selectedTower = that.id;
+            return true;
+        } else { return false; }
     }
     
     function Bomb(spec) {
-        var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .2,
-            lastFiredElapsedTime = 0;
-        
-        that.imageId = 'B1';
-        that.fireRate = 3;
-        that.damage = 20;
-        that.targetTypes = 0;
-        that.radius = 250;
-        that.targetId = -1;
-        
-        that.update = function (elapsedTime) {
-            findTarget(that);
-            if (that.targetId == -1) {
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
-            } else {
-                lastFiredElapsedTime += (elapsedTime / 1000);
-                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
-                    lastFiredElapsedTime = 0;
-                    
-                    Projectile({
-                        position : { x: that.position.x, y: that.position.y },
-                        size : 10,
-                        speed : 70,
-                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
-                        maxRange : that.radius,
-                        imageId : 'P1',
-                        damage : that.damage,
-                        targetTypes : that.targetTypes
-                    });
+        if (moneyEarned >= 200) {
+            moneyEarned -= 200;
+            var that = GameObject(spec),
+                defaultRotationSpeed = Math.PI * .2,
+                lastFiredElapsedTime = 0;
+            
+            that.imageId = 'B1';
+            that.fireRate = 3;
+            that.damage = 20;
+            that.targetTypes = 0;
+            that.radius = 250;
+            that.targetId = -1;
+            that.value = 200;
+            
+            that.update = function (elapsedTime) {
+                findTarget(that);
+                if (that.targetId == -1) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                } else {
+                    lastFiredElapsedTime += (elapsedTime / 1000);
+                    if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                        lastFiredElapsedTime = 0;
+                        
+                        Projectile({
+                            position : { x: that.position.x, y: that.position.y },
+                            size : 10,
+                            speed : 70,
+                            direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                            maxRange : that.radius,
+                            imageId : 'P1',
+                            damage : that.damage,
+                            targetTypes : that.targetTypes
+                        });
+                    }
                 }
             }
-        }
-        
-        gameObjects.add(that);
-        selectedTower = that.id;
+            
+            gameObjects.add(that);
+            selectedTower = that.id;
+            return true;
+        } else { return false; }
     }
     
     function Frost(spec) {
-        var that = GameObject(spec),
-            defaultRotationSpeed = Math.PI * .5,
-            lastFiredElapsedTime = 0;
-        
-        that.imageId = 'F1';
-        that.fireRate = 1;
-        that.damage = 5;
-        that.targetTypes = 0;
-        that.radius = 100;
-        that.targetId = -1;
-        
-        that.update = function (elapsedTime) {
-            if (!that.useMouse)
-                findTarget(that);
+        if (moneyEarned >= 125) {
+            moneyEarned -= 125;
+            var that = GameObject(spec),
+                defaultRotationSpeed = Math.PI * .5,
+                lastFiredElapsedTime = 0;
             
-            if (that.targetId == -1) {
-                that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
-            } else {
-                lastFiredElapsedTime += (elapsedTime / 1000);
-                if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
-                    lastFiredElapsedTime = 0;
-                    
-                    Projectile({
-                        position : { x: that.position.x, y: that.position.y },
-                        size : 10,
-                        speed : 70,
-                        direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
-                        maxRange : that.radius,
-                        imageId : 'P1',
-                        damage : that.damage,
-                        targetTypes : that.targetTypes
-                    });
-                }
-            }
+            that.imageId = 'F1';
+            that.fireRate = 1;
+            that.damage = 5;
+            that.targetTypes = 0;
+            that.radius = 100;
+            that.targetId = -1;
+            that.value = 125;
+            
+            that.update = function (elapsedTime) {
+                if (!that.useMouse)
+                    findTarget(that);
                 
-        }
-        
-        gameObjects.add(that);
-        
-        selectedTower = that.id;
+                if (that.targetId == -1) {
+                    that.rotation += defaultRotationSpeed * (elapsedTime / 1000);
+                } else {
+                    lastFiredElapsedTime += (elapsedTime / 1000);
+                    if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
+                        lastFiredElapsedTime = 0;
+                        
+                        Projectile({
+                            position : { x: that.position.x, y: that.position.y },
+                            size : 10,
+                            speed : 70,
+                            direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
+                            maxRange : that.radius,
+                            imageId : 'P1',
+                            damage : that.damage,
+                            targetTypes : that.targetTypes
+                        });
+                    }
+                }
+                
+            }
+            
+            gameObjects.add(that);
+            
+            selectedTower = that.id;
+            return true;
+        } else { return false; }
     }
     
     function UpdateAll(elapsedTime) {
@@ -1208,6 +1232,7 @@
     }, 5000);
     
     graphics.drawStaticObjects();
+    moneyEarned = 500;
     
     return {
         Turret : Turret,
