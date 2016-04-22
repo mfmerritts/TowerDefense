@@ -9,14 +9,29 @@ MyGame.graphics = (function() {
         mouseX = 0,
         mouseY = 0;
     
+    function drawGameStartMessage(){
+        context.save();
+        context.font = "36px Arial";
+        context.fillText("Waiting for player to start game..", 100, 50);
+        context.restore();
+    }
+
     function drawMoneyFloat(ar){
         if (ar.length != 0) {
             for (var a = 0; a < ar.length; a++) {
-                context.save();
-                context.font = "12px Arial";
-                context.fillText("+ $" + ar[a][2], ar[a][0] - 5, ar[a][1] - 5);
-                ar[a][1] -= 0.2;
-                context.restore();
+                if (ar[a][4] == 0) {
+                    context.save();
+                    context.font = "12px Arial";
+                    context.fillText("+ $" + ar[a][2], ar[a][0] - 5, ar[a][1] - 5);
+                    ar[a][1] -= 0.2;
+                    context.restore();
+                }
+                if (ar[a][4] == 1) {
+                    context.save();
+                    context.font = "36px Arial";
+                    context.fillText(ar[a][2], ar[a][0] , ar[a][1]);
+                    context.restore();
+                }
             }
         }
     }
@@ -325,6 +340,7 @@ MyGame.graphics = (function() {
         drawGrid : drawGrid,
         drawStaticObjects : drawStaticObjects,
         drawMoney : drawMoney, 
-        drawMoneyFloat: drawMoneyFloat
+        drawMoneyFloat: drawMoneyFloat,
+        drawGameStartMessage: drawGameStartMessage
 	};
 }());
