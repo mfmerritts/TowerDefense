@@ -10,11 +10,139 @@
         sprites = {},
         moneyEarned = 0,
         scoreTotal = 0,
-        renderEvent = [];
+        renderEvent = [],
+        gameLive = false,
+        currentLevel = 0,
+        currentWave = 0;
     
+    //level stuff
+    var levels = {};
+    levels[0] = {
+        waveOne: function () {
+            console.log("wave one");
+            triggerLevelEvent(300, 40, "level 1 Start!");
+            var int1Counter = 0;
+            var interval1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 30,
+                    hp : 30
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(interval1);
+                    currentWave++;
+                    triggerLevelEvent(50, 40, "Incoming wave of creeps in 20 seconds!");
+                    var temp = setInterval(function () {
+                        levels[currentLevel].waveTwo();
+                        clearInterval(temp);
+                    }, 20000);
+                }
+            }, 5000);
+        },
+        waveTwo: function () {
+            triggerLevelEvent(300, 40, "Wave Two");
+            var int1Counter = 0,
+                int2Counter = 0;
+            var interval1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 30,
+                    hp : 30
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(interval1);
+                    triggerLevelEvent(50, 40, "Incoming wave of creeps in 20 seconds!");
+                    currentWave++;
+                    var temp = setInterval(function () {
+                        levels[currentLevel].waveThree();
+                        clearInterval(temp);
+                    }, 20000);
+                }
+            }, 5000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 20,
+                    hp : 80
+                }, "right");
+                int2Counter++;
+                if (int2Counter == 5) {
+                    clearInterval(interval2);        
+                }
+            }, 8000);
+        },
+        waveThree: function () {
+            triggerLevelEvent(300, 40, "Wave Three");
+            var int1Counter = 0,
+                int2Counter = 0,
+                int3Counter = 0;
+            var interval1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 30,
+                    hp : 30
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(interval1);
+                    currentLevel++;
+                    currentWave = 0;
+                    gameLive = false;
+                    triggerLevelEvent(275, 100, "level One Complete");
+                }
+            }, 5000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 15,
+                    hp : 80
+                }, "right");
+                int2Counter++;
+                if (int2Counter == 5) {
+                    clearInterval(interval2);
+                }
+            }, 8000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 20,
+                    hp : 30
+                }, "right");
+                int3Counter++;
+                if (int1Counter == 6) {
+                    clearInterval(interval3);
+                }
+            }, 5000);
+        }
+    };
+    
+    function startNextLevel(){
+        if (!gameLive) {
+            gameLive = true;
+            levels[currentLevel].waveOne();
+        }
+    }
+
     function triggerScoreEvent(x, y, worth){
-        console.log(worth + " : " + x + " , " + y);
-        renderEvent.push([x, y, worth, 100]);
+        renderEvent.push([x, y, worth, 100, 0]);
+    }
+    
+    function triggerLevelEvent(x, y, type){
+        renderEvent.push([x, y, type, 200, 1]);
     }
     
     function SpriteObject(spec) {
@@ -780,6 +908,10 @@
         }
 
         particleSystem.render();
+        if (!gameLive) {
+            //render start game message
+            graphics.drawGameStartMessage();
+        }
     }
     
     function circleCollisionDetection(circle1, circle2) {
@@ -1197,39 +1329,7 @@
             temp2[k] = [];
         }
         collisionGrid.push(temp2);
-    }
-    
-
-    
-    //adds creep
-    //needs to be replaced with a way to continuously introduce new creeps
-   setInterval(function () {
-        Creep({
-            position : { x: 325, y: 699 },
-            size : 30,
-            spriteSheetId : 1,
-            speed : 30,
-            hp : 30
-        }, "top");
-    }, 3000); 
-    setInterval(function () {
-        Creep({
-            position : { x: 0, y: 325 },
-            size : 30,
-            spriteSheetId : 3,
-            speed : 20,
-            hp : 60
-        }, "right");
-    }, 4000);
-    setInterval(function () {
-        Creep({
-            position : { x: 699, y: 325 },
-            size : 30,
-            spriteSheetId : 2,
-            speed : 15,
-            hp : 80
-        }, "left");
-    }, 5000);
+    }   
     
     graphics.drawStaticObjects();
     moneyEarned = 500;
@@ -1244,7 +1344,8 @@
         RenderAll : RenderAll,
         ToggleTowerGrid : ToggleTowerGrid,
         DeleteSelectedTower : DeleteSelectedTower,
-        PlaceTower : PlaceTower
+        PlaceTower : PlaceTower,
+        startNextLevel: startNextLevel
     };
 
 }(MyGame.graphics, MyGame.particles));

@@ -4,12 +4,19 @@ MyGame.screens['game-play'] = (function (game) {
     var lastTime = 0,
         newTower = 0;
     
+    function startLevelEvent(e){
+        if (e.keyCode == 13) {
+            game.gameObjects.startNextLevel();
+        }        
+    }
+
     function gameOver(message) {
     }
     
     function initialize() {
         window.addEventListener('click', clickEvent);
-        
+        window.addEventListener('keydown', startLevelEvent);
+
         var controlList = [];
         controlList.push({ key: KeyEvent.DOM_VK_ESCAPE, handler: escapeKey });
         game.registerControls(controlList);
