@@ -61,9 +61,12 @@ MyGame.screens['game-play'] = (function (game) {
         if (newTower != 0 && oldTowerId == 0) {
             if (createNewTower()) {
                 game.gameObjects.ToggleTowerGrid();
+            } else {
+                newTower = 0;
             }
         } else if (newTower != 0 && oldTowerId != newTower) {
             game.gameObjects.DeleteSelectedTower(true);
+            newTower = 0;
             createNewTower();
         }
     }

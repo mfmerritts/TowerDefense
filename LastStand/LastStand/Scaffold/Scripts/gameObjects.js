@@ -337,6 +337,7 @@
                             tower.useMouse = false;
                             tower.position = { x: dx + 25, y: dy + 25 };
                             tower.size = 40;
+                            selectedTower = 0;
                             ToggleTowerGrid();
                             return true;
                         } else {
@@ -438,12 +439,14 @@
     };
     
     function DeleteSelectedTower(refund) {
-        var item = gameObjects.getObject(selectedTower);
-        if (item.value && refund) {
-            moneyEarned += item.value;
+        if (selectedTower != 0) {
+            var item = gameObjects.getObject(selectedTower);
+            if (item && item.value && refund) {
+                moneyEarned += item.value;
+            }
+            gameObjects.remove(selectedTower);
+            selectedTower = 0;
         }
-        gameObjects.remove(selectedTower);
-        selectedTower = 0;
     }
     
     function UpdateGrid(object, lastCollisionGridX, lastCollisionGridY) {
