@@ -145,6 +145,16 @@
         renderEvent.push([x, y, type, 200, 1]);
     }
     
+    function PlaySound(id, loop){
+        var audio = document.getElementById(id);
+        if (!audio.paused) audio.pause();
+        audio.currentTime = 0;
+        if (loop) {
+            audio.loop = true;
+        }
+        audio.play();
+    }
+    
     function SpriteObject(spec) {
         var that = {},
             imageIds = spec.imageIds,
@@ -237,8 +247,14 @@
                                 if (projectile.slow) {
                                     item.slow();
                                 }
+                                if (projectile.sound) {
+                                    PlaySound(projectile.sound);
+                                }
                                 if (item.hp <= 0) {
                                     /* Creep dies */
+                                    
+                                    PlaySound('CreepDeath');
+
                                     RemoveFromCollisionGrid(item.gridX, item.gridX, item.id);
                                     particleSystem.CreepDeathExplosion({
                                         center: { x: item.position.x, y: item.position.y }
@@ -341,6 +357,7 @@
                             tower.position = { x: dx + 25, y: dy + 25 };
                             tower.size = 40;
                             selectedTower = 0;
+                            PlaySound('TowerPlaced');
                             ToggleTowerGrid();
                             return true;
                         } else {
@@ -383,7 +400,7 @@
             tower.rotation += trackTargetRotationSpeed * (elapsedTime / 1000);
         }
         
-        return diffAngle < 15;
+        return Math.abs(diffAngle) < 20;
     }
     
     function findTarget(tower) {
@@ -454,7 +471,7 @@
             if (item && item.value) {
                 moneyEarned += refund ? item.value : Math.floor(item.value/2);
             }
-
+            PlaySound('TowerSold');
             gameObjects.remove(selectedTower);
             selectedTower = 0;
         }
@@ -465,6 +482,7 @@
             var item = gameObjects.getObject(selectedTower);
             if (item && item.upgradeCost != 0) {
                 item.upgrade();
+                PlaySound('TowerPlaced');
             }
         }
     }
@@ -516,6 +534,7 @@
         that.slow = spec.slow;
         that.imageId = spec.imageId;
         that.damage = spec.damage;
+        that.sound = spec.sound;
         
         that.update = function (elapsedTime) {
             var movementX = speed * (elapsedTime / 1000) * direction.x,
@@ -755,6 +774,8 @@
                     if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
                         lastFiredElapsedTime = 0;
                         
+                        PlaySound('TurretFiring');
+
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 10,
@@ -816,6 +837,8 @@
                     if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
                         lastFiredElapsedTime = 0;
                         
+                        PlaySound('MissileFiring');
+
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 10,
@@ -878,6 +901,8 @@
                     if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
                         lastFiredElapsedTime = 0;
                         
+                        PlaySound('BombFiring');
+
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 10,
@@ -886,7 +911,8 @@
                             maxRange : that.radius,
                             imageId : 'P1',
                             damage : that.damage,
-                            targetTypes : that.targetTypes
+                            targetTypes : that.targetTypes,
+                            sound : 'BombHits'
                         });
                     }
                 }
@@ -941,6 +967,8 @@
                     if (TrackTower(that, elapsedTime) && lastFiredElapsedTime >= that.fireRate) {
                         lastFiredElapsedTime = 0;
                         
+                        PlaySound('FrostFiring');
+
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 10,
@@ -1459,6 +1487,8 @@
     
     graphics.drawStaticObjects();
     moneyEarned = 500;
+    
+    PlaySound('ThemeMusic', true);
     
     return {
         Turret : Turret,
