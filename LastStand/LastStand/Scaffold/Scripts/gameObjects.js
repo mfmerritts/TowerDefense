@@ -234,6 +234,9 @@
                             var object2 = { x: item.position.x, y: item.position.y, radius: item.size / 2 };
                             if (circleCollisionDetection(object1, object2)) {
                                 item.hp -= projectile.damage;
+                                if (projectile.slow) {
+                                    item.slow();
+                                }
                                 if (item.hp <= 0) {
                                     /* Creep dies */
                                     RemoveFromCollisionGrid(item.gridX, item.gridX, item.id);
@@ -507,9 +510,10 @@
             distanceTraveled = 0,
             speed = spec.speed,
             direction = spec.direction,
-            maxRange = spec.maxRange;
+            maxRange = spec.maxRange + 20;
         
         that.targetTypes = spec.targetTypes;
+        that.slow = spec.slow;
         that.imageId = spec.imageId;
         that.damage = spec.damage;
         
@@ -526,7 +530,7 @@
             if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (800 + that.size / 2)) {
                 gameObjects.remove(that.id);
             } else {
-                distanceTraveled += movementX + movementY;
+                distanceTraveled += Math.abs(movementX) + Math.abs(movementY);
                 
                 if (!gameObjects.detectCollisions(that) && distanceTraveled >= maxRange) {
                     RemoveFromCollisionGrid(that.gridX, that.gridY, that.id);
@@ -541,7 +545,9 @@
     function Creep(spec, des) {
         var that = GameObject(spec),
             originalHp = spec.hp,
-            spriteSheetId = spec.spriteSheetId;
+            spriteSheetId = spec.spriteSheetId,
+            timeSlowed = 0,
+            isSlowed = false;
         
         
         that.imageId = sprites[spriteSheetId].update(0);
@@ -595,6 +601,16 @@
         
         that.update = function (elapsedTime) {
             that.percentage = that.hp / originalHp;
+            
+            if (isSlowed) {
+                console.log(that.speed);
+                timeSlowed += elapsedTime;
+                if (timeSlowed >= 2000) {
+                    timeSlowed = 0;
+                    isSlowed = false;
+                    that.speed = that.speed * 2;
+                }
+            }
             
             that.imageElapsedTime += elapsedTime;
             that.imageId = sprites[spriteSheetId].update(that);
@@ -698,6 +714,15 @@
                 /* Creep escaped */
                 RemoveFromCollisionGrid(that.gridX, that.gridY, that.id);
                 gameObjects.remove(that.id);
+            }
+        }
+        
+        that.slow = function () {
+            if (isSlowed) {
+                timeSlowed = 0;
+            } else {
+                isSlowed = true;
+                that.speed = that.speed / 2;
             }
         }
         
@@ -924,7 +949,8 @@
                             maxRange : that.radius,
                             imageId : 'P1',
                             damage : that.damage,
-                            targetTypes : that.targetTypes
+                            targetTypes : that.targetTypes,
+                            slow : true
                         });
                     }
                 }
