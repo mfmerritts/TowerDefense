@@ -34,27 +34,29 @@ MyGame.screens['game-play'] = (function (game) {
         var x = event.clientX;
         var y = event.clientY;
         
-        if ((x > 724) && (x < 776)) {
+        if ((x > 774) && (x < 826)) {
             menuClick(x, y);
         } else if (newTower != 0) {
             if (game.gameObjects.PlaceTower(x, y)) {
                 newTower = 0;
             }
+        } else {
+            game.gameObjects.Click(x, y);
         }
     }
     
     function menuClick(x, y) {
         var oldTowerId = newTower;
-        if ((y > 99) && (y < 151)) {
+        if ((y > 9) && (y < 61)) {
             newTower = 1;
         }
-        if ((y > 199) && (y < 251)) {
+        if ((y > 89) && (y < 141)) {
             newTower = 2;
         }
-        if ((y > 299) && (y < 351)) {
+        if ((y > 169) && (y < 221)) {
             newTower = 3;
         }
-        if ((y > 399) && (y < 451)) {
+        if ((y > 249) && (y < 301)) {
             newTower = 4;
         }
         
@@ -76,22 +78,26 @@ MyGame.screens['game-play'] = (function (game) {
             case 1:
                 return game.gameObjects.Turret({
                     useMouse : true,
-                    size : 40
+                    size : 40,
+                    type : 'Turret'
                 });
             case 2:
                 return game.gameObjects.Missile({
                     useMouse : true,
-                    size : 40
+                    size : 40,
+                    type : 'Missile'
                 });
             case 3:
                 return game.gameObjects.Bomb({
                     useMouse : true,
-                    size : 40
+                    size : 40,
+                    type : 'Bomb'
                 });
             case 4:
                 return game.gameObjects.Frost({
                     useMouse : true,
-                    size : 40
+                    size : 40,
+                    type : 'Frost'
                 });
         }
         return false;

@@ -193,6 +193,7 @@ MyGame.graphics = (function() {
     
     function drawStaticObjects(){
         context.save();
+        context.font = "12px Arial";
         
         context.drawImage(
             images['BG'],
@@ -207,25 +208,77 @@ MyGame.graphics = (function() {
 
         context.drawImage(
             images['T1'],
-            725,
-            100,
+            775,
+            10,
             50, 50);
+        context.fillText("Turret: $100", 765, 75);
+
         context.drawImage(
             images['M1'],
-            725,
-            200,
+            775,
+            90,
             50, 50);
+        context.fillText("Missile: $150", 765, 155);
+
         context.drawImage(
             images['B1'],
-            725,
-            300,
+            775,
+            170,
             50, 50);
+        context.fillText("Bomb: $200", 765, 235);
+
         context.drawImage(
             images['F1'],
-            725,
-            400,
+            775,
+            250,
             50, 50);
+        context.fillText("Frost: $125", 765, 315);
         
+        context.restore();
+    }
+    
+    function drawSelectedTower(spec){
+        context.save();
+        context.font = "12px Arial";
+        var targets = '',
+            description = '';
+        
+        switch (spec.type) {
+            case 'Turret':
+                targets = 'Air/Ground';
+                description = 'Low damage, high rate of fire';
+                break;
+            case 'Frost':
+                targets = 'Ground';
+                description = 'Low damage, applies slowing effect';
+                break;
+            case 'Bomb':
+                targets = 'Ground';
+                description = 'High damage, low rate of fire';
+                break;
+            case 'Missile':
+                targets = 'Air';
+                description = 'Fair damage, projectile tracks targets';
+                break;
+        }
+
+        context.fillText("Type: " + spec.type, 705, 350);
+        context.fillText("Damage: " + spec.damage, 705, 370);
+        context.fillText("Rate of Fire: " + spec.fireRate + " rounds/sec", 705, 390);
+        context.fillText("Targets: " + targets, 705, 410);
+        context.fillText("Description:", 705, 430);
+        context.fillText(description, 705, 442);
+        
+        if (spec.upgradeCost > 0) {
+            context.fillText("Next Upgrade: $" + spec.upgradeCost, 705, 462);
+            context.drawImage(
+                images['UG'],
+                705,
+                472,
+                100, 40);
+        }
+
+
         context.restore();
     }
     
@@ -324,6 +377,10 @@ MyGame.graphics = (function() {
         imageId : 'Fire',
         src: 'Scaffold/Images/fire.png'
     });
+    imageList.push({
+        imageId : 'UG',
+        src : 'Scaffold/Images/upgrade_button.png'
+    });
     loadImages(imageList);
     
     canvas.addEventListener('mousemove', function (evt) {
@@ -341,6 +398,7 @@ MyGame.graphics = (function() {
         drawStaticObjects : drawStaticObjects,
         drawMoney : drawMoney, 
         drawMoneyFloat: drawMoneyFloat,
-        drawGameStartMessage: drawGameStartMessage
+        drawGameStartMessage: drawGameStartMessage,
+        drawSelectedTower : drawSelectedTower
 	};
 }());

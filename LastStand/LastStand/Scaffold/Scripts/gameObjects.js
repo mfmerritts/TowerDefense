@@ -266,7 +266,8 @@
     
     function PlaceTower(x, y) {
         var dx = 0,
-            dy = 0;
+            dy = 0,
+            tower = gameObjects.getObject(selectedTower);
         
         for (var rows = 0; rows < towerGrid.length; ++rows) {
             if (y < dy + 50) {
@@ -292,7 +293,7 @@
                                 return false;
                             }
 
-                            towerGrid[rows][items] = 1;
+                            towerGrid[rows][items] = tower.id;
                             //no horizontal blocks
                             var temp2 = findShortestTopToBottom(6, 0);
                             if (temp2 == null) {
@@ -333,7 +334,6 @@
 
                                 }
                             }
-                            var tower = gameObjects.getObject(selectedTower);
                             tower.useMouse = false;
                             tower.position = { x: dx + 25, y: dy + 25 };
                             tower.size = 40;
@@ -352,6 +352,13 @@
             }
         }
         return false;
+    }
+    
+    function Click(x, y){
+        var dx = Math.floor(x / 50),
+            dy = Math.floor(y / 50);
+        
+        selectedTower = towerGrid[dy][dx];
     }
     
     function TrackTower(tower, elapsedTime) {
@@ -701,6 +708,7 @@
             that.radius = 100;
             that.targetId = -1;
             that.value = 100;
+            that.upgradeCost = 75;
             
             that.update = function (elapsedTime) {
                 findTarget(that);
@@ -745,6 +753,7 @@
             that.radius = 150;
             that.targetId = -1;
             that.value = 150;
+            that.upgradeCost = 125;
             
             that.update = function (elapsedTime) {
                 findTarget(that);
@@ -790,6 +799,7 @@
             that.radius = 250;
             that.targetId = -1;
             that.value = 200;
+            that.upgradeCost = 175;
             
             that.update = function (elapsedTime) {
                 findTarget(that);
@@ -834,6 +844,7 @@
             that.radius = 100;
             that.targetId = -1;
             that.value = 125;
+            that.upgradeCost = 100;
             
             that.update = function (elapsedTime) {
                 if (!that.useMouse)
@@ -909,8 +920,19 @@
                 towerGridActive : towerGridActive
             });
         }
-
         particleSystem.render();
+        
+        if (selectedTower != 0) {
+            var tower = gameObjects.getObject(selectedTower);
+
+            graphics.drawSelectedTower({
+                type : tower.getType(),
+                damage : tower.damage,
+                fireRate : tower.fireRate,
+                upgradeCost : tower.upgradeCost
+            });
+        }
+
         if (!gameLive) {
             //render start game message
             graphics.drawGameStartMessage();
@@ -963,7 +985,7 @@
             node.visited = true;
             if (node.posX + 1 <= 13) {
                 //check down
-                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] == 0)) {
                     if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX + 1][node.posY].pre = node;
@@ -973,7 +995,7 @@
             }
             if (node.posX - 1 >= 0) {
                 //check up
-                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] == 0)) {
                     if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX - 1][node.posY].pre = node;
@@ -983,7 +1005,7 @@
             }
             if (node.posY + 1 <= 13) {
                 //check right
-                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] == 0)) {
                     if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY + 1].pre = node;
@@ -993,7 +1015,7 @@
             }
             if (node.posY - 1 >= 0) {
                 //check left
-                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] == 0)) {
                     if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY - 1].pre = node;
@@ -1059,7 +1081,7 @@
             node.visited = true;
             if (node.posX + 1 <= 13) {
                 //check down
-                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] == 0)) {
                     if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX + 1][node.posY].pre = node;
@@ -1069,7 +1091,7 @@
             }
             if (node.posX - 1 >= 0) {
                 //check up
-                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] == 0)) {
                     if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX - 1][node.posY].pre = node;
@@ -1079,7 +1101,7 @@
             }
             if (node.posY + 1 <= 13) {
                 //check right
-                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] == 0)) {
                     if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY + 1].pre = node;
@@ -1089,7 +1111,7 @@
             }
             if (node.posY - 1 >= 0) {
                 //check left
-                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] == 0)) {
                     if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY - 1].pre = node;
@@ -1155,7 +1177,7 @@
             node.visited = true;
             if (node.posX + 1 <= 13) {
                 //check down
-                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] == 0)) {
                     if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX + 1][node.posY].pre = node;
@@ -1165,7 +1187,7 @@
             }
             if (node.posX - 1 >= 0) {
                 //check up
-                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] == 0)) {
                     if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX - 1][node.posY].pre = node;
@@ -1175,7 +1197,7 @@
             }
             if (node.posY + 1 <= 13) {
                 //check right
-                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] == 0)) {
                     if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY + 1].pre = node;
@@ -1185,7 +1207,7 @@
             }
             if (node.posY - 1 >= 0) {
                 //check left
-                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] == 0)) {
                     if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY - 1].pre = node;
@@ -1251,7 +1273,7 @@
             node.visited = true;
             if (node.posX + 1 <= 13) {
                 //check down
-                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX + 1][node.posY].visited) && (towerGrid[node.posX + 1][node.posY] == 0)) {
                     if (searchArry[node.posX + 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX + 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX + 1][node.posY].pre = node;
@@ -1261,7 +1283,7 @@
             }
             if (node.posX - 1 >= 0) {
                 //check up
-                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] != 1)) {
+                if ((!searchArry[node.posX - 1][node.posY].visited) && (towerGrid[node.posX - 1][node.posY] == 0)) {
                     if (searchArry[node.posX - 1][node.posY].dis > node.dis + 1) {
                         searchArry[node.posX - 1][node.posY].dis = node.dis + 1;
                         searchArry[node.posX - 1][node.posY].pre = node;
@@ -1271,7 +1293,7 @@
             }
             if (node.posY + 1 <= 13) {
                 //check right
-                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY + 1].visited) && (towerGrid[node.posX][node.posY + 1] == 0)) {
                     if (searchArry[node.posX][node.posY + 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY + 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY + 1].pre = node;
@@ -1281,7 +1303,7 @@
             }
             if (node.posY - 1 >= 0) {
                 //check left
-                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] != 1)) {
+                if ((!searchArry[node.posX][node.posY - 1].visited) && (towerGrid[node.posX][node.posY - 1] == 0)) {
                     if (searchArry[node.posX][node.posY - 1].dis > node.dis + 1) {
                         searchArry[node.posX][node.posY - 1].dis = node.dis + 1;
                         searchArry[node.posX][node.posY - 1].pre = node;
@@ -1348,7 +1370,8 @@
         ToggleTowerGrid : ToggleTowerGrid,
         DeleteSelectedTower : DeleteSelectedTower,
         PlaceTower : PlaceTower,
-        startNextLevel: startNextLevel
+        startNextLevel: startNextLevel,
+        Click : Click
     };
 
 }(MyGame.graphics, MyGame.particles));
