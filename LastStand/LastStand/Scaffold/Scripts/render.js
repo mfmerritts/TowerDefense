@@ -11,6 +11,7 @@ MyGame.graphics = (function() {
     
     function drawGameStartMessage(){
         context.save();
+        context.fillStyle = 'white';
         context.font = "36px Arial";
         context.fillText("Waiting for player to start game..", 100, 50);
         context.restore();
