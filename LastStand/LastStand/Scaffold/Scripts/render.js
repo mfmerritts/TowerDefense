@@ -21,6 +21,7 @@ MyGame.graphics = (function() {
             for (var a = 0; a < ar.length; a++) {
                 if (ar[a][4] == 0) {
                     context.save();
+                    context.fillStyle = 'white';
                     context.font = "12px Arial";
                     context.fillText("+ $" + ar[a][2], ar[a][0] - 5, ar[a][1] - 5);
                     ar[a][1] -= 0.2;
@@ -28,6 +29,7 @@ MyGame.graphics = (function() {
                 }
                 if (ar[a][4] == 1) {
                     context.save();
+                    context.fillStyle = 'white';
                     context.font = "36px Arial";
                     context.fillText(ar[a][2], ar[a][0] , ar[a][1]);
                     context.restore();
@@ -39,6 +41,7 @@ MyGame.graphics = (function() {
     function drawMoney(money, score){
         context.save();
         context.font = "12px Arial";
+        context.fillStyle = 'white';
         context.fillText("$: " + money, 715, 600);
         context.fillText("Score: " + score, 715, 625);
         context.restore();
@@ -85,10 +88,12 @@ MyGame.graphics = (function() {
     function drawRec(spec)
     {
         context.save();
-
-        context.translate(spec.x, spec.y);
-        context.rotate(spec.rotation);
-        context.translate(-spec.x, -spec.y);
+        
+        if (spec.rotation) {
+            context.translate(spec.x, spec.y);
+            context.rotate(spec.rotation);
+            context.translate(-spec.x, -spec.y);
+        }
 
         context.fillStyle = spec.rgb;
         context.fillRect(spec.x, spec.y, spec.width, spec.height);
@@ -195,22 +200,19 @@ MyGame.graphics = (function() {
         context.save();
         context.font = "12px Arial";
         
-        context.drawImage(
-            images['BG'],
-            0,
-            0,
-            700, 700);
-        
         context.beginPath();
         context.moveTo(700, 0);
         context.lineTo(700, 700);
         context.stroke();
+        
+        context.fillRect(700, 0, 200, 700);
 
         context.drawImage(
             images['T1'],
             775,
             10,
             50, 50);
+        context.fillStyle = 'white';
         context.fillText("Turret: $100", 765, 75);
 
         context.drawImage(
@@ -239,6 +241,7 @@ MyGame.graphics = (function() {
     
     function drawSelectedTower(spec){
         context.save();
+        context.fillStyle = 'white';
         context.font = "12px Arial";
         var targets = '',
             description = '';
@@ -272,7 +275,7 @@ MyGame.graphics = (function() {
         if (spec.upgradeCost > 0) {
             context.fillText("Next Upgrade: $" + spec.upgradeCost, 705, 462);
             drawRec({
-                rgb: 'rgb(0, 255, 0)',
+                rgb: 'rgb(0, 153, 51)',
                 x: 705,
                 y: 472,
                 width: 80,
@@ -306,11 +309,6 @@ MyGame.graphics = (function() {
 
     
     var imageList = [];
-    imageList.push({
-        imageId : 'BG',
-        src: 'Scaffold/Images/Terrain.jpg'
-    });
-    loadImages(imageList);
     imageList.push({
         imageId : 'T1',
         src: 'Scaffold/Images/TurretLevel1.png'

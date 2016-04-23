@@ -18,6 +18,10 @@
     font-size: 20px;
 }
 
+body {
+    background-image: url("/Scaffold/Images/BluePlanet.jpg");
+}
+
 button {
     background-color: #4CAF50;
     border: 2px black solid;
@@ -43,7 +47,7 @@ button:hover {
 #game {
     height: 700px;
     width: 900px;
-    border: 2px black solid;
+    border: 2px white solid;
     text-align: center;
 }
 
