@@ -357,7 +357,7 @@
     function Click(x, y){
         var dx = Math.floor(x / 50),
             dy = Math.floor(y / 50);
-        
+
         selectedTower = towerGrid[dy][dx];
     }
     
@@ -448,11 +448,21 @@
     function DeleteSelectedTower(refund) {
         if (selectedTower != 0) {
             var item = gameObjects.getObject(selectedTower);
-            if (item && item.value && refund) {
-                moneyEarned += item.value;
+            if (item && item.value) {
+                moneyEarned += refund ? item.value : Math.floor(item.value/2);
             }
+
             gameObjects.remove(selectedTower);
             selectedTower = 0;
+        }
+    }
+    
+    function UpgradeSelectedTower(){
+        if (selectedTower != 0) {
+            var item = gameObjects.getObject(selectedTower);
+            if (item && item.upgradeCost != 0) {
+                item.upgrade();
+            }
         }
     }
     
@@ -699,7 +709,8 @@
             moneyEarned -= 100;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .3,
-                lastFiredElapsedTime = 0;
+                lastFiredElapsedTime = 0,
+                upgradeLevel = 1;
             
             that.imageId = 'T1';
             that.fireRate = .25;
@@ -733,6 +744,21 @@
                 }
             }
             
+            that.upgrade = function (){
+                if (moneyEarned >= that.upgradeCost) {
+                    moneyEarned -= that.upgradeCost;
+                    that.imageId = 'T' + ++upgradeLevel;
+                    that.damage += 2;
+                    that.radius += 25;
+                    that.value += that.upgradeCost;
+                    that.upgradeCost += 75;
+                    
+                    if (upgradeLevel == 3) {
+                        that.upgradeCost = 0;
+                    }
+                }
+            }
+            
             gameObjects.add(that);
             selectedTower = that.id;
             return true;
@@ -744,7 +770,8 @@
             moneyEarned -= 150;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .75,
-                lastFiredElapsedTime = 0;
+                lastFiredElapsedTime = 0,
+                upgradeLevel = 1;
             
             that.imageId = 'M1';
             that.fireRate = 1;
@@ -779,6 +806,21 @@
                 
             }
             
+            that.upgrade = function () {
+                if (moneyEarned >= that.upgradeCost) {
+                    moneyEarned -= that.upgradeCost;
+                    that.imageId = 'M' + ++upgradeLevel;
+                    that.damage += 4;
+                    that.radius += 30;
+                    that.value += that.upgradeCost;
+                    that.upgradeCost += 100;
+                    
+                    if (upgradeLevel == 3) {
+                        that.upgradeCost = 0;
+                    }
+                }
+            }
+            
             gameObjects.add(that);
             selectedTower = that.id;
             return true;
@@ -790,7 +832,8 @@
             moneyEarned -= 200;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .2,
-                lastFiredElapsedTime = 0;
+                lastFiredElapsedTime = 0,
+                upgradeLevel = 1;
             
             that.imageId = 'B1';
             that.fireRate = 3;
@@ -824,6 +867,21 @@
                 }
             }
             
+            that.upgrade = function () {
+                if (moneyEarned >= that.upgradeCost) {
+                    moneyEarned -= that.upgradeCost;
+                    that.imageId = 'B' + ++upgradeLevel;
+                    that.damage += 10;
+                    that.radius += 50;
+                    that.value += that.upgradeCost;
+                    that.upgradeCost += 125;
+                    
+                    if (upgradeLevel == 3) {
+                        that.upgradeCost = 0;
+                    }
+                }
+            }
+            
             gameObjects.add(that);
             selectedTower = that.id;
             return true;
@@ -835,7 +893,8 @@
             moneyEarned -= 125;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .5,
-                lastFiredElapsedTime = 0;
+                lastFiredElapsedTime = 0,
+                upgradeLevel = 1;
             
             that.imageId = 'F1';
             that.fireRate = 1;
@@ -870,6 +929,21 @@
                     }
                 }
                 
+            }
+            
+            that.upgrade = function () {
+                if (moneyEarned >= that.upgradeCost) {
+                    moneyEarned -= that.upgradeCost;
+                    that.imageId = 'F' + ++upgradeLevel;
+                    that.damage += 3;
+                    that.radius += 20;
+                    that.value += that.upgradeCost;
+                    that.upgradeCost += 75;
+                    
+                    if (upgradeLevel == 3) {
+                        that.upgradeCost = 0;
+                    }
+                }
             }
             
             gameObjects.add(that);
@@ -917,7 +991,8 @@
                 imageId : obj.imageId,
                 radius : obj.radius,
                 percentage : obj.percentage,
-                towerGridActive : towerGridActive
+                towerGridActive : towerGridActive,
+                isSelected : selectedTower == obj.id
             });
         }
         particleSystem.render();
@@ -1371,7 +1446,8 @@
         DeleteSelectedTower : DeleteSelectedTower,
         PlaceTower : PlaceTower,
         startNextLevel: startNextLevel,
-        Click : Click
+        Click : Click,
+        UpgradeSelectedTower : UpgradeSelectedTower
     };
 
 }(MyGame.graphics, MyGame.particles));

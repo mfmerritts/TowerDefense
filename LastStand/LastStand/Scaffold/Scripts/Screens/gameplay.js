@@ -36,12 +36,18 @@ MyGame.screens['game-play'] = (function (game) {
         
         if ((x > 774) && (x < 826)) {
             menuClick(x, y);
-        } else if (newTower != 0) {
+        } else if ((x > 704) && (x < 786) && (y > 471) && (y < 493)) {
+            game.gameObjects.UpgradeSelectedTower();
+        } else if ((x > 789) && (x < 871) && (y > 471) && (y < 493)) {
+            game.gameObjects.DeleteSelectedTower(false);
+        } else if ((x < 700) && newTower != 0) {
             if (game.gameObjects.PlaceTower(x, y)) {
                 newTower = 0;
             }
         } else {
-            game.gameObjects.Click(x, y);
+            if (x < 700) {
+                game.gameObjects.Click(x, y);
+            }
         }
     }
     

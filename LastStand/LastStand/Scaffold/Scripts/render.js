@@ -141,7 +141,7 @@ MyGame.graphics = (function() {
             renderObject.size, renderObject.size);
         context.restore();
 
-        if (renderObject.towerGridActive && renderObject.radius) {
+        if ((renderObject.towerGridActive && renderObject.radius) || renderObject.isSelected) {
             drawCircle({
                 x: renderObject.useMouse ? mouseX : renderObject.position.x,
                 y: renderObject.useMouse ? mouseY : renderObject.position.y,
@@ -271,12 +271,26 @@ MyGame.graphics = (function() {
         
         if (spec.upgradeCost > 0) {
             context.fillText("Next Upgrade: $" + spec.upgradeCost, 705, 462);
-            context.drawImage(
-                images['UG'],
-                705,
-                472,
-                100, 40);
+            drawRec({
+                rgb: 'rgb(0, 255, 0)',
+                x: 705,
+                y: 472,
+                width: 80,
+                height: 20
+            });
+            context.font = "15px Arial";
+            context.fillText("Upgrade", 720, 485);
         }
+        
+        drawRec({
+            rgb: 'rgb(255, 0, 0)',
+            x: 790,
+            y: 472,
+            width: 80,
+            height: 20
+        });
+        context.font = "15px Arial";
+        context.fillText("Sell", 815, 488);
 
 
         context.restore();
@@ -302,16 +316,48 @@ MyGame.graphics = (function() {
         src: 'Scaffold/Images/TurretLevel1.png'
     });
     imageList.push({
+        imageId : 'T2',
+        src: 'Scaffold/Images/TurretLevel2.png'
+    });
+    imageList.push({
+        imageId : 'T3',
+        src: 'Scaffold/Images/TurretLevel3.png'
+    });
+    imageList.push({
         imageId : 'M1',
         src: 'Scaffold/Images/MissileLevel1.png'
+    });
+    imageList.push({
+        imageId : 'M2',
+        src: 'Scaffold/Images/MissileLevel2.png'
+    });
+    imageList.push({
+        imageId : 'M3',
+        src: 'Scaffold/Images/MissileLevel3.png'
     });
     imageList.push({
         imageId : 'B1',
         src: 'Scaffold/Images/BombLevel1.png'
     });
     imageList.push({
+        imageId : 'B2',
+        src: 'Scaffold/Images/BombLevel2.png'
+    });
+    imageList.push({
+        imageId : 'B3',
+        src: 'Scaffold/Images/BombLevel3.png'
+    });
+    imageList.push({
         imageId : 'F1',
         src: 'Scaffold/Images/FrostLevel1.png'
+    });
+    imageList.push({
+        imageId : 'F2',
+        src: 'Scaffold/Images/FrostLevel2.png'
+    });
+    imageList.push({
+        imageId : 'F3',
+        src: 'Scaffold/Images/FrostLevel3.png'
     });
     imageList.push({
         imageId : 'P1',
@@ -376,10 +422,6 @@ MyGame.graphics = (function() {
     imageList.push({
         imageId : 'Fire',
         src: 'Scaffold/Images/fire.png'
-    });
-    imageList.push({
-        imageId : 'UG',
-        src : 'Scaffold/Images/upgrade_button.png'
     });
     loadImages(imageList);
     
