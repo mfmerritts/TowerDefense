@@ -24,6 +24,7 @@
     //level 1
     levels[0] = {
         waveOne: function () {
+            ClearCollisionGrid();
             currentWave = 1;
             triggerLevelEvent(250, 40, "Level One Start!");
             var int1Counter = 0;
@@ -47,6 +48,7 @@
             }, 5000);
         },
         waveTwo: function () {
+            ClearCollisionGrid();
             var int1Counter = 0,
                 int2Counter = 0;
             var interval1 = setInterval(function () {
@@ -82,6 +84,7 @@
             }, 8000);
         },
         waveThree: function () {
+            ClearCollisionGrid();
             var int1Counter = 0,
                 int2Counter = 0,
                 int3Counter = 0;
@@ -132,6 +135,7 @@
     //level 2
     levels[1] = {
         waveOne: function () {
+            ClearCollisionGrid();
             triggerLevelEvent(250, 40, "Level Two Start!");
             currentWave = 1;
             var int1Counter = 0;
@@ -169,6 +173,7 @@
             }, 3000);
         }, 
         waveTwo: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -218,6 +223,7 @@
             }, 4000);
         }, 
         waveThree: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -281,6 +287,7 @@
             }, 2000);
         }, 
         waveFour: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -363,6 +370,7 @@
     //level 3
     levels[2] = {
         waveOne: function () {
+            ClearCollisionGrid();
             triggerLevelEvent(250, 40, "Level Three Start!");
             currentWave = 1;
             var int1Counter = 0;
@@ -400,6 +408,7 @@
             }, 2000);
         }, 
         waveTwo: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -449,6 +458,7 @@
             }, 4000);
         }, 
         waveThree: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -512,6 +522,7 @@
             }, 2000);
         }, 
         waveFour: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -589,6 +600,7 @@
             }, 1500);
         }, 
         waveFive: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -671,6 +683,7 @@
     //level 4
     levels[3] = {
         waveOne: function () {
+            ClearCollisionGrid();
             triggerLevelEvent(250, 40, "Level Four Start!");
             currentWave = 1;
             var int1Counter = 0;
@@ -708,6 +721,7 @@
             }, 2000);
         }, 
         waveTwo: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -757,6 +771,7 @@
             }, 4000);
         }, 
         waveThree: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -820,6 +835,7 @@
             }, 2000);
         }, 
         waveFour: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -897,6 +913,7 @@
             }, 1500);
         }, 
         waveFive: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -974,6 +991,7 @@
             }, 1500);
         }, 
         waveSix: function () {
+            ClearCollisionGrid();
             var int1Counter = 0;
             var int2Counter = 0;
             var int3Counter = 0;
@@ -1050,6 +1068,23 @@
                 }
             }, 1500);
         }
+    };
+    
+    function ClearCollisionGrid(){
+        collisionGrid.length = 0;
+        collisionGrid = [];
+        
+        var temp = [],
+            rows = 14,
+            cols = 14;
+
+        for (var i = 0; i < rows / 2; ++i) {
+            temp = [];
+            for (var k = 0; k < cols / 2; ++k) {
+                temp[k] = [];
+            }
+            collisionGrid.push(temp);
+        }   
     };
     
     function startNextLevel(){
@@ -1675,8 +1710,8 @@
             that.position.x += that.speed * (elapsedTime / 1000) * that.directionX;
             that.position.y += that.speed * (elapsedTime / 1000) * that.directionY;
             
-            that.rotation = Math.atan(that.directionY / that.directionX);
-            
+            that.rotation = Math.atan2(that.directionY, that.directionX);
+
             UpdateGrid(that, lastCollisionGridX, lastCollisionGridY);
             
             if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (700 + that.size / 2)) {
@@ -1908,9 +1943,9 @@
             
             that.imageId = 'F1';
             that.fireRate = 1;
-            that.damage = 5;
+            that.damage = 2;
             that.targetTypes = 0;
-            that.radius = 100;
+            that.radius = 125;
             that.targetId = -1;
             that.value = 125;
             that.upgradeCost = 100;
@@ -1974,20 +2009,22 @@
     }
 
     function UpdateAll(elapsedTime) {
-        var objectList = gameObjects.getObjectList();
-        for (var i = 0; i < objectList.length; ++i) {
-            objectList[i].update(elapsedTime);
-        }
-        particleSystem.update(elapsedTime);
-        for (var a = 0; a < renderEvent.length; ++a) {
-            renderEvent[a][3] -= 1;
-            if (renderEvent[a][3] <= 0) {
-                renderEvent.splice(a, 1);
+        if (!gameLost) {
+            var objectList = gameObjects.getObjectList();
+            for (var i = 0; i < objectList.length; ++i) {
+                objectList[i].update(elapsedTime);
             }
-        }
-        if (creepsEscaped >= 30) {
-            gameLost = true;
-            clearGame();
+            particleSystem.update(elapsedTime);
+            for (var a = 0; a < renderEvent.length; ++a) {
+                renderEvent[a][3] -= 1;
+                if (renderEvent[a][3] <= 0) {
+                    renderEvent.splice(a, 1);
+                }
+            }
+            if (creepsEscaped >= 30) {
+                gameLost = true;
+                clearGame();
+            }
         }
     }
     

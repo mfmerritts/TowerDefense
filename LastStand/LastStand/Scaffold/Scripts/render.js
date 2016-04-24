@@ -21,7 +21,7 @@ MyGame.graphics = (function() {
         context.save();
         context.fillStyle = 'white';
         context.font = "36px Arial";
-        context.fillText("Game Over", 100, 50);
+        context.fillText("Game Over", 300, 400);
         context.restore();
     }
 
