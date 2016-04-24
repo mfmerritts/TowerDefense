@@ -25,7 +25,7 @@
     levels[0] = {
         waveOne: function () {
             currentWave = 1;
-            triggerLevelEvent(300, 40, "Level One Start!");
+            triggerLevelEvent(250, 40, "Level One Start!");
             var int1Counter = 0;
             var interval1 = setInterval(function () {
                 Creep({
@@ -132,7 +132,7 @@
     //level 2
     levels[1] = {
         waveOne: function () {
-            triggerLevelEvent(300, 40, "Level Two Start!");
+            triggerLevelEvent(250, 40, "Level Two Start!");
             currentWave = 1;
             var int1Counter = 0;
             var int2Counter = 0;
@@ -363,7 +363,7 @@
     //level 3
     levels[2] = {
         waveOne: function () {
-            triggerLevelEvent(300, 40, "Level Three Start!");
+            triggerLevelEvent(250, 40, "Level Three Start!");
             currentWave = 1;
             var int1Counter = 0;
             var int2Counter = 0;
@@ -671,7 +671,7 @@
     //level 4
     levels[3] = {
         waveOne: function () {
-            triggerLevelEvent(300, 40, "Level Four Start!");
+            triggerLevelEvent(250, 40, "Level Four Start!");
             currentWave = 1;
             var int1Counter = 0;
             var int2Counter = 0;
@@ -1020,7 +1020,6 @@
                         clearInterval(temp);
                         currentWave = 0;
                         //game over
-                        triggerLevelEvent(300, 40, "level 1 Start!");
                     }, 20000);
                 }
             }, 4000);
