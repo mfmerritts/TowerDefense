@@ -13,37 +13,40 @@
         renderEvent = [],
         gameLive = false,
         currentLevel = 0,
-        currentWave = 0;
+        currentWave = 0,
+        towerValues = 0,
+        creepsEscaped = 0, 
+        creepsDestroyed = 0,
+        gameLost = false;
     
     //level stuff
     var levels = {};
+    //level 1
     levels[0] = {
         waveOne: function () {
-            console.log("wave one");
-            triggerLevelEvent(300, 40, "level 1 Start!");
+            currentWave = 1;
+            triggerLevelEvent(250, 40, "Level One Start!");
             var int1Counter = 0;
             var interval1 = setInterval(function () {
                 Creep({
                     position : { x: 0, y: 325 },
                     size : 30,
                     spriteSheetId : 1,
-                    speed : 30,
+                    speed : 25,
                     hp : 30
                 }, "right");
                 int1Counter++;
                 if (int1Counter == 10) {
                     clearInterval(interval1);
-                    currentWave++;
-                    triggerLevelEvent(50, 40, "Incoming wave of creeps in 20 seconds!");
                     var temp = setInterval(function () {
                         levels[currentLevel].waveTwo();
                         clearInterval(temp);
+                        currentWave++;
                     }, 20000);
                 }
             }, 5000);
         },
         waveTwo: function () {
-            triggerLevelEvent(300, 40, "Wave Two");
             var int1Counter = 0,
                 int2Counter = 0;
             var interval1 = setInterval(function () {
@@ -51,17 +54,16 @@
                     position : { x: 0, y: 325 },
                     size : 30,
                     spriteSheetId : 1,
-                    speed : 30,
+                    speed : 25,
                     hp : 30
                 }, "right");
                 int1Counter++;
                 if (int1Counter == 10) {
                     clearInterval(interval1);
-                    triggerLevelEvent(50, 40, "Incoming wave of creeps in 20 seconds!");
-                    currentWave++;
                     var temp = setInterval(function () {
                         levels[currentLevel].waveThree();
                         clearInterval(temp);
+                        currentWave++;
                     }, 20000);
                 }
             }, 5000);
@@ -70,7 +72,7 @@
                     position : { x: 0, y: 325 },
                     size : 30,
                     spriteSheetId : 2,
-                    speed : 20,
+                    speed : 10,
                     hp : 80
                 }, "right");
                 int2Counter++;
@@ -80,7 +82,6 @@
             }, 8000);
         },
         waveThree: function () {
-            triggerLevelEvent(300, 40, "Wave Three");
             var int1Counter = 0,
                 int2Counter = 0,
                 int3Counter = 0;
@@ -89,7 +90,7 @@
                     position : { x: 0, y: 325 },
                     size : 30,
                     spriteSheetId : 1,
-                    speed : 30,
+                    speed : 20,
                     hp : 30
                 }, "right");
                 int1Counter++;
@@ -98,7 +99,6 @@
                     currentLevel++;
                     currentWave = 0;
                     gameLive = false;
-                    triggerLevelEvent(275, 100, "level One Complete");
                 }
             }, 5000);
             var interval2 = setInterval(function () {
@@ -106,7 +106,7 @@
                     position : { x: 0, y: 325 },
                     size : 30,
                     spriteSheetId : 2,
-                    speed : 15,
+                    speed : 10,
                     hp : 80
                 }, "right");
                 int2Counter++;
@@ -127,6 +127,928 @@
                     clearInterval(interval3);
                 }
             }, 5000);
+        }
+    };
+    //level 2
+    levels[1] = {
+        waveOne: function () {
+            triggerLevelEvent(250, 40, "Level Two Start!");
+            currentWave = 1;
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 25,
+                    hp : 35
+                }, "left");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 35
+                }, "right");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[1].waveTwo();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+        }, 
+        waveTwo: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 25,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 35
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[1].waveThree();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 20,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+        }, 
+        waveThree: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 40
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[1].waveFour();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 20,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+        }, 
+        waveFour: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 40
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave = 0;
+                        currentLevel++;
+                        gameLive = false;
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "right");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
+        }
+    };
+    
+    //level 3
+    levels[2] = {
+        waveOne: function () {
+            triggerLevelEvent(250, 40, "Level Three Start!");
+            currentWave = 1;
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 45
+                }, "top");
+                int1Counter++;
+                if (int1Counter == 20) {
+                    clearInterval(intveral1);
+                }
+            }, 1500);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 45
+                }, "right");
+                int2Counter++;
+                if (int2Counter == 15) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[2].waveTwo();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 2000);
+        }, 
+        waveTwo: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 25,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 35
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[2].waveThree();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "top");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+        }, 
+        waveThree: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "top");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 40
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[2].waveFour();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 20,
+                    hp : 100
+                }, "top");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+        }, 
+        waveFour: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 40
+                }, "top");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave++;
+                        levels[2].waveFive();
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 35,
+                    hp : 110
+                }, "top");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
+        }, 
+        waveFive: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 40
+                }, "top");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave = 0;
+                        currentLevel++;
+                        gameLive = false;
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 35
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 35,
+                    hp : 110
+                }, "top");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
+        }
+    };
+    
+    //level 4
+    levels[3] = {
+        waveOne: function () {
+            triggerLevelEvent(250, 40, "Level Four Start!");
+            currentWave = 1;
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "bottom");
+                int1Counter++;
+                if (int1Counter == 20) {
+                    clearInterval(intveral1);
+                }
+            }, 1500);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 50
+                }, "right");
+                int2Counter++;
+                if (int2Counter == 15) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[3].waveTwo();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 2000);
+        }, 
+        waveTwo: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 35,
+                    hp : 40
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 50,
+                    hp : 20
+                }, "bottom");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[3].waveThree();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 5,
+                    hp : 140
+                }, "top");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+        }, 
+        waveThree: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "top");
+                int1Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 50
+                }, "left");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                    var temp = setInterval(function () {
+                        levels[3].waveFour();
+                        clearInterval(temp);
+                        currentWave++;
+                    }, 20000);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 30,
+                    hp : 100
+                }, "bottom");
+                int3Counter++;
+                if (int3Counter == 5) {
+                    clearInterval(interval3);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 10) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+        }, 
+        waveFour: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 50
+                }, "top");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave++;
+                        levels[3].waveFive();
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 35,
+                    hp : 120
+                }, "bottom");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
+        }, 
+        waveFive: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 50
+                }, "top");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave++;
+                        levels[3].waveSix();
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 35,
+                    hp : 120
+                }, "bottom");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
+        }, 
+        waveSix: function () {
+            var int1Counter = 0;
+            var int2Counter = 0;
+            var int3Counter = 0;
+            var int4Counter = 0;
+            var int5Counter = 0;
+            var intveral1 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int1Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral1);
+                }
+            }, 2000);
+            var interval2 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 699 },
+                    size : 30,
+                    spriteSheetId : 1,
+                    speed : 35,
+                    hp : 50
+                }, "top");
+                int2Counter++;
+                if (int2Counter == 12) {
+                    clearInterval(interval2);
+                }
+            }, 3000);
+            var interval3 = setInterval(function () {
+                Creep({
+                    position : { x: 699, y: 325 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 25,
+                    hp : 100
+                }, "left");
+                int3Counter++;
+                if (int3Counter == 10) {
+                    clearInterval(interval3);
+                    var temp = setInterval(function () {
+                        clearInterval(temp);
+                        currentWave = 0;
+                        //game over
+                    }, 20000);
+                }
+            }, 4000);
+            var intveral4 = setInterval(function () {
+                Creep({
+                    position : { x: 0, y: 325 },
+                    size : 30,
+                    spriteSheetId : 3,
+                    speed : 30,
+                    hp : 50
+                }, "right");
+                int4Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral4);
+                }
+            }, 2000);
+            var intveral5 = setInterval(function () {
+                Creep({
+                    position : { x: 325, y: 0 },
+                    size : 30,
+                    spriteSheetId : 2,
+                    speed : 35,
+                    hp : 120
+                }, "bottom");
+                int5Counter++;
+                if (int1Counter == 12) {
+                    clearInterval(intveral5);
+                }
+            }, 1500);
         }
     };
     
@@ -263,6 +1185,7 @@
                                     });
                                     moneyEarned += item.worth;
                                     scoreTotal += item.worth * 2;
+                                    creepsDestroyed++;
                                     gameObjects.remove(item.id);
                                     triggerScoreEvent(item.position.x, item.position.y, item.worth);
                                 } else {
@@ -486,7 +1409,8 @@
         if (selectedTower != 0) {
             var item = gameObjects.getObject(selectedTower);
             if (item && item.value) {
-                moneyEarned += refund ? item.value : Math.floor(item.value/2);
+                moneyEarned += refund ? item.value : Math.floor(item.value / 2);
+                towerValues -= refund ? item.value : Math.floor(item.value);
             }
             
             if (!item.useMouse) {
@@ -695,6 +1619,7 @@
                     if ((that.gridCoordX == 14) && (that.gridCoordY == 6)) {
                         //this is the code that handles the removal of this object
                         gameObjects.remove(that.id);
+                        creepsEscaped++;
                         return;
                     }
                 }
@@ -758,6 +1683,7 @@
                 /* Creep escaped */
                 RemoveFromCollisionGrid(that.gridX, that.gridY, that.id);
                 gameObjects.remove(that.id);
+                creepsEscaped++;
             }
         }
         
@@ -776,6 +1702,7 @@
     function Turret(spec) {
         if (moneyEarned >= 100) {
             moneyEarned -= 100;
+            towerValues += 100;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .3,
                 lastFiredElapsedTime = 0,
@@ -818,6 +1745,7 @@
             that.upgrade = function (){
                 if (moneyEarned >= that.upgradeCost) {
                     moneyEarned -= that.upgradeCost;
+                    towerValues += that.upgradeCost;
                     that.imageId = 'T' + ++upgradeLevel;
                     that.damage += 2;
                     that.radius += 25;
@@ -839,6 +1767,7 @@
     function Missile(spec) {
         if (moneyEarned >= 150) {
             moneyEarned -= 150;
+            towerValues += 150;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .75,
                 lastFiredElapsedTime = 0,
@@ -882,6 +1811,7 @@
             that.upgrade = function () {
                 if (moneyEarned >= that.upgradeCost) {
                     moneyEarned -= that.upgradeCost;
+                    towerValues += that.upgradeCost;
                     that.imageId = 'M' + ++upgradeLevel;
                     that.damage += 4;
                     that.radius += 30;
@@ -903,6 +1833,7 @@
     function Bomb(spec) {
         if (moneyEarned >= 200) {
             moneyEarned -= 200;
+            towerValues += 200;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .2,
                 lastFiredElapsedTime = 0,
@@ -947,6 +1878,7 @@
             that.upgrade = function () {
                 if (moneyEarned >= that.upgradeCost) {
                     moneyEarned -= that.upgradeCost;
+                    towerValues += that.upgradeCost;
                     that.imageId = 'B' + ++upgradeLevel;
                     that.damage += 10;
                     that.radius += 50;
@@ -968,6 +1900,7 @@
     function Frost(spec) {
         if (moneyEarned >= 125) {
             moneyEarned -= 125;
+            towerValues += 125;
             var that = GameObject(spec),
                 defaultRotationSpeed = Math.PI * .5,
                 lastFiredElapsedTime = 0,
@@ -1015,6 +1948,7 @@
             that.upgrade = function () {
                 if (moneyEarned >= that.upgradeCost) {
                     moneyEarned -= that.upgradeCost;
+                    towerValues += that.upgradeCost;
                     that.imageId = 'F' + ++upgradeLevel;
                     that.damage += 3;
                     that.radius += 20;
@@ -1034,6 +1968,11 @@
         } else { return false; }
     }
     
+    function clearGame(){
+       // do stuff here to reset the game
+       //send info to high scores
+    }
+
     function UpdateAll(elapsedTime) {
         var objectList = gameObjects.getObjectList();
         for (var i = 0; i < objectList.length; ++i) {
@@ -1045,13 +1984,17 @@
             if (renderEvent[a][3] <= 0) {
                 renderEvent.splice(a, 1);
             }
-        }  
+        }
+        if (creepsEscaped >= 30) {
+            gameLost = true;
+            clearGame();
+        }
     }
     
     function RenderAll() {
         graphics.clearCanvas();
         graphics.drawStaticObjects();
-        graphics.drawMoney(moneyEarned, scoreTotal);
+        graphics.drawMoney(moneyEarned, scoreTotal, currentLevel + 1, currentWave, 30 - creepsEscaped);
         graphics.drawMoneyFloat(renderEvent);
 
         if (towerGridActive) {
@@ -1092,6 +2035,10 @@
         if (!gameLive) {
             //render start game message
             graphics.drawGameStartMessage();
+        }
+
+        if (gameLost) {
+            graphics.drawGameLostMessage();
         }
     }
     
@@ -1516,7 +2463,7 @@
     moneyEarned = 500;
     
     PlaySound('ThemeMusic', true);
-    
+       
     return {
         Turret : Turret,
         Missile : Missile,
