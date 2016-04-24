@@ -17,7 +17,8 @@
         towerValues = 0,
         creepsEscaped = 0, 
         creepsDestroyed = 0,
-        gameLost = false;
+        gameOver = false,
+        gameWon = false;
     
     //level stuff
     var levels = {};
@@ -1065,7 +1066,8 @@
                 int5Counter++;
                 if (int1Counter == 12) {
                     clearInterval(intveral5);
-                    gameLost = true;
+                    gameWon = creepsEscaped < 30;
+                    gameOver = true;
                     clearGame();
                 }
             }, 1500);
@@ -1305,9 +1307,7 @@
                             //make sure creeps can't be blocked in
                             var objectList = gameObjects.getObjectList();
                             for (var i = 0; i < objectList.length; i++) {
-                                //console.log(i);
                                 if (objectList[i].isCreep) {
-                                    //console.log("checking!");
                                     var temp = null;
                                     var destinationCollecter = objectList[i].destination;
                                     if (destinationCollecter == "bottom") {
@@ -1325,7 +1325,6 @@
                                     if (temp == null) {
                                         towerGrid[rows][items] = 0;
                                         return false;
-                                        //console.log("blockage found!");
                                     }
 
                                 }
@@ -1630,7 +1629,6 @@
             that.percentage = that.hp / originalHp;
             
             if (isSlowed) {
-                console.log(that.speed);
                 timeSlowed += elapsedTime;
                 if (timeSlowed >= 2000) {
                     timeSlowed = 0;
@@ -1644,7 +1642,6 @@
             
             that.gridCoordX = Math.floor(that.position.x / 50);
             that.gridCoordY = Math.floor(that.position.y / 50);
-            //console.log("current loc: " + that.gridCoordX + " " + that.gridCoordY);
             
             //object is not air so its movements vary based on tower locations
             if (!that.isAir) {
@@ -1699,11 +1696,8 @@
                     return;
                 }
                 
-                //console.log("Next move: " + that.nextMove[1] + " " + that.nextMove[0]);
                 that.directionX = that.nextMove[1] - that.gridCoordX;
-                //console.log("that.directionX: " + that.directionX);
                 that.directionY = that.nextMove[0] - that.gridCoordY;
-                //console.log("that.directionY: " + that.directionY);
                 
                 //these helps the creep stay closer to the center of the square its in (x coords)
                 if (that.directionX == 0) {
@@ -2039,21 +2033,21 @@
             levelReached : currentLevel + 1,
             waveReached : currentWave + 1,
             remainingLives : 30 - creepsEscaped
-            },
+        },
             highScores = localStorage.getItem('HighScores-All');
-
+        
         if (highScores !== null) {
             highScores = JSON.parse(highScores);
         } else {
             highScores = [];
         }
-
+        
         highScores.push(scoreObject);
         localStorage['HighScores-All'] = JSON.stringify(highScores);
     }
     
     function UpdateAll(elapsedTime) {
-        if (!gameLost) {
+        if (!gameOver) {
             var objectList = gameObjects.getObjectList();
             for (var i = 0; i < objectList.length; ++i) {
                 objectList[i].update(elapsedTime);
@@ -2066,7 +2060,7 @@
                 }
             }
             if (creepsEscaped >= 30) {
-                gameLost = true;
+                gameOver = true;
                 clearGame();
             }
         }
@@ -2118,8 +2112,8 @@
             graphics.drawGameStartMessage();
         }
         
-        if (gameLost) {
-            graphics.drawGameLostMessage();
+        if (gameOver) {
+            graphics.drawGameOverMessage(gameWon);
             window.setTimeout(function () { window.location = window.location; }, 3000);
         }
     }
@@ -2138,13 +2132,11 @@
         }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 6) && (currentY == 13)) {
-            //console.log("special case 1");
             return [14, 6];
         }
         //the creep is offically off the grid, but still appears on the screen
         //the code below continues the animation so the creep will move off the screen completely 
         if ((currentX == 6) && (currentY == 14)) {
-            //console.log("special case 2");
             return [15, 6];
         }
         //creates a new 2d array of objects that are used for BFS
@@ -2218,10 +2210,8 @@
             //this is stuff happens if a creep's path had been blocked
             return null;
         }
-        //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
             pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
         //return next array to move to 
@@ -2234,13 +2224,11 @@
         }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 6) && (currentY == 0)) {
-            //console.log("special case 1");
             return [-1, 6];
         }
         //the creep is offically off the grid, but still appears on the screen
         //the code below continues the animation so the creep will move off the screen completely 
         if ((currentX == 6) && (currentY == -1)) {
-            //console.log("special case 2");
             return [-2, 6];
         }
         //creates a new 2d array of objects that are used for BFS
@@ -2314,10 +2302,8 @@
             //this is stuff happens if a creep's path had been blocked
             return null;
         }
-        //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
             pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
         //return next array to move to 
@@ -2330,13 +2316,11 @@
         }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 13) && (currentY == 6)) {
-            //console.log("special case 1");
             return [6, 14];
         }
         //the creep is offically off the grid, but still appears on the screen
         //the code below continues the animation so the creep will move off the screen completely 
         if ((currentX == 14) && (currentY == 6)) {
-            //console.log("special case 2");
             return [6, 15];
         }
         //creates a new 2d array of objects that are used for BFS
@@ -2410,10 +2394,8 @@
             //this is stuff happens if a creep's path had been blocked
             return null;
         }
-        //console.log("shortest path to [13][6] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
             pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
         //return next array to move to 
@@ -2426,13 +2408,11 @@
         }
         //this code is when the creep has made it to the final square and now needs to exit the game
         if ((currentX == 0) && (currentY == 6)) {
-            //console.log("special case 1");
             return [6, -1];
         }
         //the creep is offically off the grid, but still appears on the screen
         //the code below continues the animation so the creep will move off the screen completely 
         if ((currentX == -1) && (currentY == 6)) {
-            //console.log("special case 2");
             return [6, -2];
         }
         //creates a new 2d array of objects that are used for BFS
@@ -2506,10 +2486,8 @@
             //this is stuff happens if a creep's path had been blocked
             return null;
         }
-        //console.log("shortest path to [6][0] is...");
         while (endNode.pre != "null") {
             endNode = endNode.pre;
-            //console.log("[" + endNode.posX + "," + endNode.posY + "] " + endNode.dis);
             pathArray.splice(0, 0, [endNode.posX, endNode.posY]);
         }
         //return next array to move to 

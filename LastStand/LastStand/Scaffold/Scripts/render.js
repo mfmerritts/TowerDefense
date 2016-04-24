@@ -1,4 +1,4 @@
-MyGame.graphics = (function() { 
+MyGame.graphics = (function () {
     'use strict';
     
     var canvas = document.getElementById('canvas-main'),
@@ -9,7 +9,7 @@ MyGame.graphics = (function() {
         mouseX = 0,
         mouseY = 0;
     
-    function drawGameStartMessage(){
+    function drawGameStartMessage() {
         context.save();
         context.fillStyle = 'white';
         context.font = "36px Arial";
@@ -17,15 +17,15 @@ MyGame.graphics = (function() {
         context.restore();
     }
     
-    function drawGameLostMessage() {
+    function drawGameOverMessage(didWin) {
         context.save();
         context.fillStyle = 'white';
         context.font = "36px Arial";
-        context.fillText("Game Over", 300, 400);
+        context.fillText("Game Over " + didWin ? "You Win!" : "", 300, 400);
         context.restore();
     }
-
-    function drawMoneyFloat(ar){
+    
+    function drawMoneyFloat(ar) {
         if (ar.length != 0) {
             for (var a = 0; a < ar.length; a++) {
                 if (ar[a][4] == 0) {
@@ -46,8 +46,8 @@ MyGame.graphics = (function() {
             }
         }
     }
-
-    function drawMoney(money, score, level, wave, creep){
+    
+    function drawMoney(money, score, level, wave, creep) {
         context.save();
         context.font = "12px Arial";
         context.fillStyle = 'white';
@@ -65,40 +65,39 @@ MyGame.graphics = (function() {
         mouseY = evt.clientY - rect.top;
     }
     
-    function loadImages(imageList){
+    function loadImages(imageList) {
         imagesToLoad = imageList.length;
         for (var i = 0; i < imageList.length; ++i) {
             var imageInfo = imageList[i];
-
+            
             images[imageInfo.imageId] = createImage(imageInfo);
         }
     };
     
-    function toggleTowerGrid(){
+    function toggleTowerGrid() {
         towerGridActive = !towerGridActive;
     }
     
-    function createImage(imageInfo){
+    function createImage(imageInfo) {
         var image = new Image();
-        image.onLoad = function (){
+        image.onLoad = function () {
             imagesLoaded++;
         }
         image.src = imageInfo.src;
         return image;
     }
-                
+    
     function drawCircle(spec) {
         context.save();
         context.beginPath();
-        context.arc(spec.x, spec.y, spec.radius, 0, Math.PI*2);
+        context.arc(spec.x, spec.y, spec.radius, 0, Math.PI * 2);
         context.fillStyle = spec.fillStyle;
         context.fill();
         context.closePath();
         context.restore();
     };
     
-    function drawRec(spec)
-    {
+    function drawRec(spec) {
         context.save();
         
         if (spec.rotation) {
@@ -106,28 +105,28 @@ MyGame.graphics = (function() {
             context.rotate(spec.rotation);
             context.translate(-spec.x, -spec.y);
         }
-
+        
         context.fillStyle = spec.rgb;
         context.fillRect(spec.x, spec.y, spec.width, spec.height);
         context.restore();
     };
     
-    function drawText(spec){
+    function drawText(spec) {
         context.save();
         context.font = spec.font;
         context.textAlign = spec.textAlign;
         context.textBaseline = spec.textBaseLine;
-
+        
         context.translate(spec.x, spec.y);
         context.rotate(spec.rotation);
         context.translate(-spec.x, -spec.y);
-
+        
         context.fillText(spec.text, spec.x, spec.y);
         context.fill();
         context.restore();
     };
     
-    function drawParticle(particle){
+    function drawParticle(particle) {
         context.save();
         context.translate(particle.center.x, particle.center.y);
         context.rotate(particle.rotation);
@@ -135,14 +134,14 @@ MyGame.graphics = (function() {
         
         context.drawImage(
             images[particle.imageId], 
-            particle.center.x - particle.size/2, 
-            particle.center.y - particle.size/2,
+            particle.center.x - particle.size / 2, 
+            particle.center.y - particle.size / 2,
             particle.size, particle.size);
         
         context.restore();
     };
     
-    function drawGameObject(renderObject){
+    function drawGameObject(renderObject) {
         context.save();
         
         if (!renderObject.useMouse) {
@@ -150,15 +149,15 @@ MyGame.graphics = (function() {
             context.rotate(renderObject.rotation);
             context.translate(-renderObject.position.x, -renderObject.position.y);
         }
-
+        
         context.drawImage(
             images[renderObject.imageId],
-            renderObject.useMouse ? mouseX - renderObject.size/2 : renderObject.position.x - renderObject.size / 2,
-            renderObject.useMouse ? mouseY - renderObject.size/2 : renderObject.position.y - renderObject.size / 2,
+            renderObject.useMouse ? mouseX - renderObject.size / 2 : renderObject.position.x - renderObject.size / 2,
+            renderObject.useMouse ? mouseY - renderObject.size / 2 : renderObject.position.y - renderObject.size / 2,
             renderObject.size, renderObject.size);
         context.restore();
-
-        if ((renderObject.towerGridActive && renderObject.radius) || renderObject.isSelected) {
+        
+        if (renderObject.isSelected) {
             drawCircle({
                 x: renderObject.useMouse ? mouseX : renderObject.position.x,
                 y: renderObject.useMouse ? mouseY : renderObject.position.y,
@@ -166,7 +165,7 @@ MyGame.graphics = (function() {
                 fillStyle: 'rgba(191, 191, 191, 0.4)'
             });
         }
-
+        
         if (renderObject.percentage) {
             var color = '';
             if (renderObject.percentage <= 1 && renderObject.percentage > .75) {
@@ -179,8 +178,8 @@ MyGame.graphics = (function() {
                 color = 'rgb(255, 0, 0)';
             }
             drawRec({
-                x: renderObject.position.x - renderObject.size/2,
-                y: renderObject.position.y - renderObject.size/2 - 15,
+                x: renderObject.position.x - renderObject.size / 2,
+                y: renderObject.position.y - renderObject.size / 2 - 15,
                 width: renderObject.percentage * renderObject.size,
                 height: 5,
                 rgb: color
@@ -188,7 +187,7 @@ MyGame.graphics = (function() {
         }
     };
     
-    function drawGrid(spec){
+    function drawGrid(spec) {
         context.save();
         
         var dx = 0,
@@ -204,11 +203,11 @@ MyGame.graphics = (function() {
             dx = 0;
             dy += spec.size;
         }
-
+        
         context.restore();
     }
     
-    function drawStaticObjects(){
+    function drawStaticObjects() {
         context.save();
         context.font = "12px Arial";
         
@@ -219,7 +218,7 @@ MyGame.graphics = (function() {
         
         context.fillStyle = 'rgba(255, 255, 255, 0.5)';
         context.fillRect(700, 0, 200, 700);
-
+        
         context.drawImage(
             images['T1'],
             775,
@@ -227,21 +226,21 @@ MyGame.graphics = (function() {
             50, 50);
         context.fillStyle = 'white';
         context.fillText("Turret: $100", 765, 75);
-
+        
         context.drawImage(
             images['M1'],
             775,
             90,
             50, 50);
         context.fillText("Missile: $150", 765, 155);
-
+        
         context.drawImage(
             images['B1'],
             775,
             170,
             50, 50);
         context.fillText("Bomb: $200", 765, 235);
-
+        
         context.drawImage(
             images['F1'],
             775,
@@ -252,7 +251,7 @@ MyGame.graphics = (function() {
         context.restore();
     }
     
-    function drawSelectedTower(spec){
+    function drawSelectedTower(spec) {
         context.save();
         context.fillStyle = 'white';
         context.font = "12px Arial";
@@ -277,7 +276,7 @@ MyGame.graphics = (function() {
                 description = 'Fair damage, projectile tracks targets';
                 break;
         }
-
+        
         context.fillText("Type: " + spec.type, 705, 350);
         context.fillText("Damage: " + spec.damage, 705, 370);
         context.fillText("Rate of Fire: " + spec.fireRate + " rounds/sec", 705, 390);
@@ -307,19 +306,19 @@ MyGame.graphics = (function() {
         });
         context.font = "15px Arial";
         context.fillText("Sell", 815, 488);
-
-
+        
+        
         context.restore();
     }
     
-    function clearCanvas(){
+    function clearCanvas() {
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.restore();
     };
     
-
+    
     
     var imageList = [];
     imageList.push({
@@ -455,7 +454,7 @@ MyGame.graphics = (function() {
     canvas.addEventListener('mousemove', function (evt) {
         getMousePos(canvas, evt);
     }, false);
-
+    
     return {
         drawCircle: drawCircle,
         drawRec : drawRec,
@@ -469,6 +468,6 @@ MyGame.graphics = (function() {
         drawMoneyFloat: drawMoneyFloat,
         drawGameStartMessage: drawGameStartMessage,
         drawSelectedTower : drawSelectedTower,
-        drawGameLostMessage: drawGameLostMessage
-	};
+        drawGameOverMessage: drawGameOverMessage
+    };
 }());

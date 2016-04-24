@@ -32,7 +32,7 @@ function handleRequest(request, response) {
 }
 
 http.createServer(handleRequest).listen(3000, function () {
-    console.log('Server is listening');
+    console.log('Server is listening at http://localhost:3000');
 });
 
 /* Depricated
