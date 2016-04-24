@@ -1,6 +1,7 @@
 .screen {
     display: none;
     padding-top: 25px;
+    color: aqua;
 }
 
 .screen.active {
@@ -23,7 +24,7 @@ body {
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: lightseagreen;
     border: 2px black solid;
     color: white;
     padding: 15px 32px;
@@ -36,7 +37,7 @@ button {
 }
 
 button:hover {
-    background-color: yellow;
+    background-color: lightblue;
     color: black;
 }
 

@@ -4,8 +4,89 @@ MyGame.screens['game-play'] = (function (game) {
     var lastTime = 0,
         newTower = 0;
     
+    //upgrade tower
+    function upgradeEvent(e) {
+        var temp = document.getElementById('bind1').innerHTML;
+        console.log("upgrade: " + temp)
+        var temp2 = temp.slice(-1);
+        temp2 = temp2.charCodeAt(0);
+        if (temp == "") {
+            return;
+        }
+        if (temp.substring(0, 4) == "Ctrl") {
+            if ((e.ctrlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.UpgradeSelectedTower();
+            }
+        }
+        if (temp.substring(0, 5) == "Shift") {
+            if ((e.shiftKey) && (e.keyCode == temp2)) {
+                game.gameObjects.UpgradeSelectedTower();
+            }
+        }
+        if (temp.substring(0, 3) == "Alt") {
+            if ((e.altlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.UpgradeSelectedTower();
+            }
+        }
+        if ((e.keyCode == temp2) && (temp.length == 1)) {
+            game.gameObjects.UpgradeSelectedTower();
+        }
+    }
+
+    //sell tower
+    function sellEvent(e) {
+        var temp = document.getElementById('bind2').innerHTML;
+        console.log("sell: " + temp);
+        var temp2 = temp.slice(-1);
+        temp2 = temp2.charCodeAt(0);
+        if (temp == "") {
+            return;
+        }
+        if (temp.substring(0, 4) == "Ctrl") {
+            if ((e.ctrlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.DeleteSelectedTower();
+            }
+        }
+        if (temp.substring(0, 5) == "Shift") {
+            if ((e.shiftKey) && (e.keyCode == temp2)) {
+                game.gameObjects.DeleteSelectedTower();
+            }
+        }
+        if (temp.substring(0, 3) == "Alt") {
+            if ((e.altlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.DeleteSelectedTower();
+            }
+        }
+        if ((e.keyCode == temp2) && (temp.length == 1)) {
+            game.gameObjects.DeleteSelectedTower();
+        }
+    }
+
+    //start game
     function startLevelEvent(e){
-        if (e.keyCode == 13) {
+        var temp = document.getElementById('bind3').innerHTML;
+        console.log("start: " + temp);
+        var temp2 = temp.slice(-1);
+        temp2 = temp2.charCodeAt(0);
+        if (temp == "") {
+            return;
+        }
+        if (temp.substring(0, 4) == "Ctrl") {
+            if ((e.ctrlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.startNextLevel();
+            }
+        }
+        if (temp.substring(0, 5) == "Shift") {
+            if ((e.shiftKey) && (e.keyCode == temp2)) {
+                game.gameObjects.startNextLevel();
+            }
+        }
+        if (temp.substring(0, 3) == "Alt") {
+            if ((e.altlKey) && (e.keyCode == temp2)) {
+                game.gameObjects.startNextLevel();
+            }
+        }
+        if ((e.keyCode == temp2) && (temp.length == 1)) {
             game.gameObjects.startNextLevel();
         }        
     }
@@ -15,7 +96,6 @@ MyGame.screens['game-play'] = (function (game) {
     
     function initialize() {
         window.addEventListener('click', clickEvent);
-        window.addEventListener('keydown', startLevelEvent);
 
         var controlList = [];
         controlList.push({ key: KeyEvent.DOM_VK_ESCAPE, handler: escapeKey });
@@ -136,6 +216,9 @@ MyGame.screens['game-play'] = (function (game) {
     function run(newGame) {
         lastTime = 0;
         requestAnimationFrame(gameLoop);
+        window.addEventListener('keydown', upgradeEvent);
+        window.addEventListener('keydown', sellEvent);
+        window.addEventListener('keydown', startLevelEvent);
     }
     
     return {
