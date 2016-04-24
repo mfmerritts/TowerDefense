@@ -250,12 +250,14 @@
                                 if (projectile.sound) {
                                     PlaySound(projectile.sound);
                                 }
+
                                 if (item.hp <= 0) {
                                     /* Creep dies */
                                     
                                     PlaySound('CreepDeath');
 
                                     RemoveFromCollisionGrid(item.gridX, item.gridX, item.id);
+
                                     particleSystem.CreepDeathExplosion({
                                         center: { x: item.position.x, y: item.position.y }
                                     });
@@ -263,6 +265,21 @@
                                     scoreTotal += item.worth * 2;
                                     gameObjects.remove(item.id);
                                     triggerScoreEvent(item.position.x, item.position.y, item.worth);
+                                } else {
+                                    if (projectile.hitEffect) {
+                                        switch (projectile.hitEffect) {
+                                            case 'BombHit':
+                                                particleSystem.CreateBombHit({
+                                                    center: { x: projectile.position.x, y: projectile.position.y }
+                                                });
+                                                break;
+                                            case 'FrostHit':
+                                                particleSystem.CreateFrostHit({
+                                                    center: { x: projectile.position.x, y: projectile.position.y }
+                                                });
+                                                break;
+                                        }
+                                    }
                                 }
                                 RemoveFromCollisionGrid(projectile.gridX, projectile.gridY, projectile.id);
                                 gameObjects.remove(projectile.id);
@@ -530,6 +547,7 @@
             direction = spec.direction,
             maxRange = spec.maxRange + 20;
         
+        that.hitEffect = spec.hitEffect;
         that.targetTypes = spec.targetTypes;
         that.slow = spec.slow;
         that.imageId = spec.imageId;
@@ -778,11 +796,11 @@
 
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
-                            size : 10,
+                            size : 5,
                             speed : 150,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                             maxRange : that.radius,
-                            imageId : 'P1',
+                            imageId : 'TurretShot',
                             damage : that.damage,
                             targetTypes : that.targetTypes
                         });
@@ -845,7 +863,7 @@
                             speed : 100,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                             maxRange : that.radius,
-                            imageId : 'P1',
+                            imageId : 'MissileShot',
                             damage : that.damage,
                             targetTypes : that.targetTypes
                         });
@@ -905,14 +923,15 @@
 
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
-                            size : 10,
+                            size : 20,
                             speed : 70,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                             maxRange : that.radius,
-                            imageId : 'P1',
+                            imageId : 'BombShot',
                             damage : that.damage,
                             targetTypes : that.targetTypes,
-                            sound : 'BombHits'
+                            sound : 'BombHits',
+                            hitEffect : 'BombHit'
                         });
                     }
                 }
@@ -975,9 +994,10 @@
                             speed : 70,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                             maxRange : that.radius,
-                            imageId : 'P1',
+                            imageId : 'FrostShot',
                             damage : that.damage,
                             targetTypes : that.targetTypes,
+                            hitEffect : 'FrostHit',
                             slow : true
                         });
                     }

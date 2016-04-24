@@ -152,7 +152,7 @@ MyGame.graphics = (function() {
                 x: renderObject.useMouse ? mouseX : renderObject.position.x,
                 y: renderObject.useMouse ? mouseY : renderObject.position.y,
                 radius: renderObject.radius,
-                fillStyle: 'rgba(255, 0, 0, 0.15)'
+                fillStyle: 'rgba(191, 191, 191, 0.4)'
             });
         }
 
@@ -206,6 +206,7 @@ MyGame.graphics = (function() {
         context.lineTo(700, 700);
         context.stroke();
         
+        context.fillStyle = 'rgba(255, 255, 255, 0.5)';
         context.fillRect(700, 0, 200, 700);
 
         context.drawImage(
@@ -359,10 +360,6 @@ MyGame.graphics = (function() {
         src: 'Scaffold/Images/FrostLevel3.png'
     });
     imageList.push({
-        imageId : 'P1',
-        src: 'Scaffold/Images/P1.jpg'
-    });
-    imageList.push({
         imageId : 'Red1',
         src: 'Scaffold/Images/Red1.png'
     });
@@ -421,6 +418,22 @@ MyGame.graphics = (function() {
     imageList.push({
         imageId : 'Fire',
         src: 'Scaffold/Images/fire.png'
+    });
+    imageList.push({
+        imageId : 'BombShot',
+        src: 'Scaffold/Images/BombShot.png'
+    });
+    imageList.push({
+        imageId : 'FrostShot',
+        src: 'Scaffold/Images/FrostShot.png'
+    });
+    imageList.push({
+        imageId : 'TurretShot',
+        src: 'Scaffold/Images/TurretShot.png'
+    });
+    imageList.push({
+        imageId : 'MissileShot',
+        src: 'Scaffold/Images/MissileShot.png'
     });
     loadImages(imageList);
     
