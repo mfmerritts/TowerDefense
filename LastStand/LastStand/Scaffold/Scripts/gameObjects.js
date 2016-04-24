@@ -1458,6 +1458,9 @@
             
             PlaySound('TowerSold');
             gameObjects.remove(selectedTower);
+            var tempY = Math.floor(item.position.y / 50);
+            var tempX = Math.floor(item.position.x / 50);
+            towerGrid[tempY][tempX] = 0;
             selectedTower = 0;
         }
     }
