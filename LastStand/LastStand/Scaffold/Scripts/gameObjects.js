@@ -488,6 +488,13 @@
             if (item && item.value) {
                 moneyEarned += refund ? item.value : Math.floor(item.value/2);
             }
+            
+            if (!item.useMouse) {
+                particleSystem.CreateTowerSold({
+                    center: { x: item.position.x, y: item.position.y }
+                });
+            }
+
             PlaySound('TowerSold');
             gameObjects.remove(selectedTower);
             selectedTower = 0;
