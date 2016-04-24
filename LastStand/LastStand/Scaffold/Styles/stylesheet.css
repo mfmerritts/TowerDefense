@@ -19,6 +19,10 @@
     font-size: 20px;
 }
 
+table, th, td{
+    border: 2px white solid;
+}
+
 body {
     background-image: url("/Scaffold/Images/BluePlanet.jpg");
 }

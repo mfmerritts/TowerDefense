@@ -11,7 +11,7 @@ MyGame.particles = (function (graphics) {
         var that = {
             id: 0
         },
-            lifeTime = .3,
+            lifeTime = .1,
             duration = 0;
         
         that.update = function (elapsedTime) {
@@ -104,7 +104,7 @@ MyGame.particles = (function (graphics) {
         var that = {
             id: 0
         },
-            lifeTime = 0.5,
+            lifeTime = 0.6,
             duration = 0;
 
         that.update = function (elapsedTime){
@@ -114,12 +114,12 @@ MyGame.particles = (function (graphics) {
             } else {
                 create({
                     imageId : 'Fire',
-                    size : Random.nextGaussian(5, 1),
+                    size : Random.nextGaussian(10, 1),
                     center: { x: spec.center.x, y: spec.center.y },
                     direction: Random.nextCircleVector(),
-                    speed: Random.nextGaussian(10, 5), 
+                    speed: Random.nextGaussian(15, 5), 
                     rotation: 0,
-                    lifetime: Random.nextGaussian(.5, .5),	
+                    lifetime: Random.nextGaussian(.6, .5),	
                     alive: 0
                 });
                 return true;

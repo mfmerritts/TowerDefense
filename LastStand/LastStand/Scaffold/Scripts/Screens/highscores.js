@@ -1,59 +1,63 @@
-MyGame.screens['high-scores'] = (function(game) {
-	'use strict';
-     var highScores = {};
-	
-	function initialize() {
-		document.getElementById('id-high-scores-back').addEventListener(
-			'click',
-			function() { 
-                game.showScreen('main-menu'); 
-            });
-            document.getElementById('id-high-scores-reset').addEventListener(
-			'click',
-			function() { 
-                highScores = [];
-                localStorage.highScores = JSON.stringify(highScores);
-                var ol = document.getElementById('highScores');
-                while(ol.firstChild){
-                    ol.removeChild(ol.firstChild);
-                }
-            });
-	}
+MyGame.screens['high-scores'] = (function (game) {
+    'use strict';
+    var highScores = {};
     
-    function sortNumber(a,b) {
-        return b - a;
+    function initialize() {
+        document.getElementById('id-high-scores-back').addEventListener(
+            'click',
+			function () {
+                game.showScreen('main-menu');
+            });
     }
-	
-	function run() {
-        var ol = document.getElementById('highScores');
-        while(ol.firstChild){
-            ol.removeChild(ol.firstChild);
+    
+    function sortObject(obj1, obj2) {
+        return obj1.totalScore - obj2.totalScore;
+    }
+    
+    function run() {
+        
+        var table = document.getElementById("tblHighScores"),
+            tableRows = table.getElementsByTagName('tr'),
+            rowCount = tableRows.length;
+        
+        for (var x = rowCount - 1; x > 0; x--) {
+            table.removeChild(tableRows[x]);
         }
-                
-        if(localStorage.highScores){
-	       highScores = JSON.parse(localStorage.highScores);
-            if(highScores.length > 0){
-                highScores.sort(sortNumber);
-                if(highScores.length > 10){
-                    highScores.splice(0, 1);
-                }
-            }
+
+        highScores = localStorage.getItem('HighScores-All');
+        
+        if (highScores !== null) {
+            highScores = JSON.parse(highScores);
         } else {
             highScores = [];
         }
         
-        if(highScores.length > 0){
-            for(var i = 0; i < highScores.length; ++i){
-                var newItem = document.createElement("li"),
-                    newText = document.createTextNode(highScores[i]);
-                newItem.appendChild(newText);
-                ol.appendChild(newItem);
+        highScores.sort(sortObject);
+       
+        var count = 0;
+        for (var i = 0; i < highScores.length; ++i) {
+            count++;
+            if (count > 10) {
+                break;
+            } else {
+                var row = table.insertRow(1),
+                    creepsKilled = row.insertCell(0),
+                    livesRemaining = row.insertCell(1),
+                    totalTowerValue = row.insertCell(2),
+                    levelAndWave = row.insertCell(3),
+                    totalScore = row.insertCell(4);
+                
+                creepsKilled.innerHTML = highScores[i].creepsDestroyed;
+                livesRemaining.innerHTML = highScores[i].remainingLives;
+                totalTowerValue.innerHTML = highScores[i].towerValues;
+                levelAndWave.innerHTML = highScores[i].levelReached + ' / ' + highScores[i].waveReached;
+                totalScore.innerHTML = highScores[i].totalScore;
             }
         }
-	}
-	
-	return {
-		initialize : initialize,
-		run : run
-	};
+    }
+    
+    return {
+        initialize : initialize,
+        run : run
+    };
 }(MyGame.game));

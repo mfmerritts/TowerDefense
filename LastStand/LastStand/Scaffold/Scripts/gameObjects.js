@@ -79,7 +79,7 @@
                 }, "right");
                 int2Counter++;
                 if (int2Counter == 5) {
-                    clearInterval(interval2);        
+                    clearInterval(interval2);
                 }
             }, 8000);
         },
@@ -1065,44 +1065,46 @@
                 int5Counter++;
                 if (int1Counter == 12) {
                     clearInterval(intveral5);
+                    gameLost = true;
+                    clearGame();
                 }
             }, 1500);
         }
     };
     
-    function ClearCollisionGrid(){
+    function ClearCollisionGrid() {
         collisionGrid.length = 0;
         collisionGrid = [];
         
         var temp = [],
             rows = 14,
             cols = 14;
-
+        
         for (var i = 0; i < rows / 2; ++i) {
             temp = [];
             for (var k = 0; k < cols / 2; ++k) {
                 temp[k] = [];
             }
             collisionGrid.push(temp);
-        }   
+        }
     };
     
-    function startNextLevel(){
+    function startNextLevel() {
         if (!gameLive) {
             gameLive = true;
             levels[currentLevel].waveOne();
         }
     }
-
-    function triggerScoreEvent(x, y, worth){
+    
+    function triggerScoreEvent(x, y, worth) {
         renderEvent.push([x, y, worth, 100, 0]);
     }
     
-    function triggerLevelEvent(x, y, type){
+    function triggerLevelEvent(x, y, type) {
         renderEvent.push([x, y, type, 200, 1]);
     }
     
-    function PlaySound(id, loop){
+    function PlaySound(id, loop) {
         var audio = document.getElementById(id);
         if (!audio.paused) audio.pause();
         audio.currentTime = 0;
@@ -1116,8 +1118,8 @@
         var that = {},
             imageIds = spec.imageIds,
             imageTimes = spec.imageTimes;
-
-        that.update = function (creep){
+        
+        that.update = function (creep) {
             if (creep.imageElapsedTime >= imageTimes[creep.currentId]) {
                 creep.imageElapsedTime = 0;
                 creep.currentId++;
@@ -1127,7 +1129,7 @@
             }
             return imageIds[creep.currentId];
         }
-
+        
         return that;
     }
     
@@ -1207,14 +1209,14 @@
                                 if (projectile.sound) {
                                     PlaySound(projectile.sound);
                                 }
-
+                                
                                 if (item.hp <= 0) {
                                     /* Creep dies */
                                     
                                     PlaySound('CreepDeath');
-
+                                    
                                     RemoveFromCollisionGrid(item.gridX, item.gridX, item.id);
-
+                                    
                                     particleSystem.CreepDeathExplosion({
                                         center: { x: item.position.x, y: item.position.y }
                                     });
@@ -1286,7 +1288,7 @@
                             if ((rows == 6) && (items == 13)) {
                                 return false;
                             }
-
+                            
                             towerGrid[rows][items] = tower.id;
                             //no horizontal blocks
                             var temp2 = findShortestTopToBottom(6, 0);
@@ -1309,7 +1311,7 @@
                                     var temp = null;
                                     var destinationCollecter = objectList[i].destination;
                                     if (destinationCollecter == "bottom") {
-                                    temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
+                                        temp = findShortestTopToBottom(objectList[i].gridCoordX, objectList[i].gridCoordY);
                                     }
                                     if (destinationCollecter == "top") {
                                         temp = findShortestBottomToTop(objectList[i].gridCoordX, objectList[i].gridCoordY);
@@ -1349,10 +1351,10 @@
         return false;
     }
     
-    function Click(x, y){
+    function Click(x, y) {
         var dx = Math.floor(x / 50),
             dy = Math.floor(y / 50);
-
+        
         selectedTower = towerGrid[dy][dx];
     }
     
@@ -1410,7 +1412,7 @@
         }
     }
     
-    function ValidateTarget(isAir, targetTypes){
+    function ValidateTarget(isAir, targetTypes) {
         return targetTypes === 2 || (isAir && targetTypes === 1) || (!isAir && targetTypes === 0);
     };
     
@@ -1453,14 +1455,14 @@
                     center: { x: item.position.x, y: item.position.y }
                 });
             }
-
+            
             PlaySound('TowerSold');
             gameObjects.remove(selectedTower);
             selectedTower = 0;
         }
     }
     
-    function UpgradeSelectedTower(){
+    function UpgradeSelectedTower() {
         if (selectedTower != 0) {
             var item = gameObjects.getObject(selectedTower);
             if (item && item.upgradeCost != 0) {
@@ -1539,7 +1541,7 @@
                     center: { x: that.position.x, y: that.position.y }
                 });
             }
-
+            
             var movementX = speed * (elapsedTime / 1000) * direction.x,
                 movementY = speed * (elapsedTime / 1000) * direction.y,
                 lastCollisionGridX = Math.floor(that.position.x / 100),
@@ -1643,18 +1645,18 @@
             
             //object is not air so its movements vary based on tower locations
             if (!that.isAir) {
-
+                
                 //handles creeps going south
                 if (that.destination == "bottom") {
                     //creep reached the bottom of map and needs to be removed
-            if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
-                //this is the code that handles the removal of this object
-                gameObjects.remove(that.id);
-                return;
-            }
-                that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
+                    if ((that.gridCoordX == 6) && (that.gridCoordY == 15)) {
+                        //this is the code that handles the removal of this object
+                        gameObjects.remove(that.id);
+                        return;
+                    }
+                    that.nextMove = findShortestTopToBottom(that.gridCoordX, that.gridCoordY);
                 }
-
+                
                 //handles creeps going north
                 if (that.destination == "top") {
                     that.nextMove = findShortestBottomToTop(that.gridCoordX, that.gridCoordY)
@@ -1730,7 +1732,7 @@
             that.position.y += that.speed * (elapsedTime / 1000) * that.directionY;
             
             that.rotation = Math.atan2(that.directionY, that.directionX);
-
+            
             UpdateGrid(that, lastCollisionGridX, lastCollisionGridY);
             
             if (that.position.y >= (700 + that.size / 2) || that.position.y <= -that.size / 2 || that.position.x <= -that.size / 2 || that.position.x >= (700 + that.size / 2)) {
@@ -1781,7 +1783,7 @@
                         lastFiredElapsedTime = 0;
                         
                         PlaySound('TurretFiring');
-
+                        
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 5,
@@ -1796,7 +1798,7 @@
                 }
             }
             
-            that.upgrade = function (){
+            that.upgrade = function () {
                 if (moneyEarned >= that.upgradeCost) {
                     moneyEarned -= that.upgradeCost;
                     towerValues += that.upgradeCost;
@@ -1846,7 +1848,7 @@
                         lastFiredElapsedTime = 0;
                         
                         PlaySound('MissileFiring');
-
+                        
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 15,
@@ -1914,7 +1916,7 @@
                         lastFiredElapsedTime = 0;
                         
                         PlaySound('BombFiring');
-
+                        
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 20,
@@ -1984,7 +1986,7 @@
                         lastFiredElapsedTime = 0;
                         
                         PlaySound('FrostFiring');
-
+                        
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
                             size : 10,
@@ -2025,10 +2027,28 @@
         } else { return false; }
     }
     
-    function clearGame(){
-        window.setTimeout(function () { window.location = window.location; }, 3000);
-    }
+    function clearGame() {
+        var scoreObject = {
+            totalScore : scoreTotal + moneyEarned + creepsDestroyed - towerValues + (currentLevel * 10 + 1) + (currentWave + 1) - (creepsEscaped * 10),
+            remainingFunds : moneyEarned,
+            creepsDestroyed : creepsDestroyed,
+            towerValues : towerValues,
+            levelReached : currentLevel + 1,
+            waveReached : currentWave + 1,
+            remainingLives : 30 - creepsEscaped
+            },
+            highScores = localStorage.getItem('HighScores-All');
 
+        if (highScores !== null) {
+            highScores = JSON.parse(highScores);
+        } else {
+            highScores = [];
+        }
+
+        highScores.push(scoreObject);
+        localStorage['HighScores-All'] = JSON.stringify(highScores);
+    }
+    
     function UpdateAll(elapsedTime) {
         if (!gameLost) {
             var objectList = gameObjects.getObjectList();
@@ -2054,7 +2074,7 @@
         graphics.drawStaticObjects();
         graphics.drawMoney(moneyEarned, scoreTotal, currentLevel + 1, currentWave, 30 - creepsEscaped);
         graphics.drawMoneyFloat(renderEvent);
-
+        
         if (towerGridActive) {
             graphics.drawGrid({
                 grid : towerGrid,
@@ -2081,7 +2101,7 @@
         
         if (selectedTower != 0) {
             var tower = gameObjects.getObject(selectedTower);
-
+            
             graphics.drawSelectedTower({
                 type : tower.getType(),
                 damage : tower.damage,
@@ -2089,14 +2109,15 @@
                 upgradeCost : tower.upgradeCost
             });
         }
-
+        
         if (!gameLive) {
             //render start game message
             graphics.drawGameStartMessage();
         }
-
+        
         if (gameLost) {
             graphics.drawGameLostMessage();
+            window.setTimeout(function () { window.location = window.location; }, 3000);
         }
     }
     
@@ -2109,7 +2130,7 @@
     }
     
     function findShortestTopToBottom(currentX, currentY) {
-        if ((currentX === undefined)||(currentY === undefined)) {
+        if ((currentX === undefined) || (currentY === undefined)) {
             return null;
         }
         //this code is when the creep has made it to the final square and now needs to exit the game
@@ -2472,9 +2493,9 @@
                     }
                    
                 }
+            }
         }
-    }
-    
+        
         pathArray.push([6, 0]);
         //output of shortest path to endNode
         var endNode = searchArry[6][0];
@@ -2515,13 +2536,13 @@
             temp2[k] = [];
         }
         collisionGrid.push(temp2);
-    }   
+    }
     
     graphics.drawStaticObjects();
     moneyEarned = 500;
     
     PlaySound('ThemeMusic', true);
-       
+    
     return {
         Turret : Turret,
         Missile : Missile,
