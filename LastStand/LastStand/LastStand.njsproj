@@ -37,9 +37,11 @@
     <Compile Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="Scaffold\Resources\HighScores.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scaffold\" />
+    <Folder Include="Scaffold\Resources\" />
     <Folder Include="Scaffold\Scripts\" />
     <Folder Include="Scaffold\Scripts\Screens\" />
     <Folder Include="Scaffold\Styles\" />

@@ -11,7 +11,7 @@ MyGame.particles = (function (graphics) {
         var that = {
             id: 0
         },
-            lifeTime = .1,
+            lifeTime = .3,
             duration = 0;
         
         that.update = function (elapsedTime) {
