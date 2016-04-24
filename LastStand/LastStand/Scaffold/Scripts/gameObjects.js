@@ -1199,7 +1199,7 @@
                                                 break;
                                             case 'FrostHit':
                                                 particleSystem.CreateFrostHit({
-                                                    center: { x: projectile.position.x, y: projectile.position.y }
+                                                    center: { x: item.position.x, y: item.position.y }
                                                 });
                                                 break;
                                         }
@@ -1413,6 +1413,13 @@
                 moneyEarned += refund ? item.value : Math.floor(item.value / 2);
                 towerValues -= refund ? item.value : Math.floor(item.value);
             }
+            
+            if (!item.useMouse) {
+                particleSystem.CreateTowerSold({
+                    center: { x: item.position.x, y: item.position.y }
+                });
+            }
+
             PlaySound('TowerSold');
             gameObjects.remove(selectedTower);
             selectedTower = 0;

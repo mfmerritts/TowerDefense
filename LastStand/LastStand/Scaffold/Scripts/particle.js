@@ -7,6 +7,37 @@ MyGame.particles = (function (graphics) {
         nextName = 1,	// unique identifier for the next particle
         particles = {};	// Set of all active particles
     
+    function CreateTowerSold(spec){
+        var that = {
+            id: 0
+        },
+            lifeTime = .1,
+            duration = 0;
+        
+        that.update = function (elapsedTime) {
+            duration += elapsedTime;
+            if (duration >= lifeTime) {
+                return false;
+            } else {
+                create({
+                    imageId : 'money',
+                    size : Random.nextGaussian(15, 2),
+                    center: { x: spec.center.x, y: spec.center.y },
+                    direction: Random.nextCircleVector(),
+                    speed: Random.nextGaussian(20, 1), 
+                    rotation: 0,
+                    lifetime: Random.nextGaussian(.5, .5),	
+                    alive: 0
+                });
+                return true;
+            }
+        }
+        
+        effectsNextName++;
+        that.id = effectsNextName;
+        effects[effectsNextName] = that;
+    }
+    
     function CreateFrostHit(spec){
         var that = {
             id: 0
@@ -166,6 +197,7 @@ MyGame.particles = (function (graphics) {
         update : update,
         CreepDeathExplosion : CreepDeathExplosion,
         CreateBombHit : CreateBombHit,
-        CreateFrostHit : CreateFrostHit
+        CreateFrostHit : CreateFrostHit,
+        CreateTowerSold : CreateTowerSold
     };
 }(MyGame.graphics));

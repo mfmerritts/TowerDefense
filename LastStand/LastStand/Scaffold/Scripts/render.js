@@ -446,6 +446,10 @@ MyGame.graphics = (function() {
         imageId : 'MissileShot',
         src: 'Scaffold/Images/MissileShot.png'
     });
+    imageList.push({
+        imageId : 'money',
+        src: 'Scaffold/Images/dolar.png'
+    });
     loadImages(imageList);
     
     canvas.addEventListener('mousemove', function (evt) {
