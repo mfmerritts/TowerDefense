@@ -1511,7 +1511,9 @@
             distanceTraveled = 0,
             speed = spec.speed,
             direction = spec.direction,
-            maxRange = spec.maxRange + 20;
+            maxRange = spec.maxRange + 60,
+            targetId = spec.targetId,
+            trail = spec.trail;
         
         that.hitEffect = spec.hitEffect;
         that.targetTypes = spec.targetTypes;
@@ -1521,6 +1523,23 @@
         that.sound = spec.sound;
         
         that.update = function (elapsedTime) {
+            if (targetId) {
+                var target = gameObjects.getObject(targetId);
+                if (target) {
+                    direction.x = target.position.x - that.position.x;
+                    direction.y = target.position.y - that.position.y;
+                    var Dp = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+                    direction.x = direction.x / Dp;
+                    direction.y = direction.y / Dp;
+                }
+            }
+            
+            if (trail) {
+                particleSystem.CreateTrail({
+                    center: { x: that.position.x, y: that.position.y }
+                });
+            }
+
             var movementX = speed * (elapsedTime / 1000) * direction.x,
                 movementY = speed * (elapsedTime / 1000) * direction.y,
                 lastCollisionGridX = Math.floor(that.position.x / 100),
@@ -1812,7 +1831,7 @@
             that.fireRate = 1;
             that.damage = 5;
             that.targetTypes = 1;
-            that.radius = 150;
+            that.radius = 300;
             that.targetId = -1;
             that.value = 150;
             that.upgradeCost = 125;
@@ -1830,13 +1849,15 @@
 
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
-                            size : 10,
+                            size : 20,
                             speed : 100,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
-                            maxRange : that.radius,
+                            maxRange : 800,
                             imageId : 'MissileShot',
                             damage : that.damage,
-                            targetTypes : that.targetTypes
+                            targetTypes : that.targetTypes,
+                            targetId : that.targetId,
+                            trail : true
                         });
                     }
                 }
@@ -1849,7 +1870,7 @@
                     towerValues += that.upgradeCost;
                     that.imageId = 'M' + ++upgradeLevel;
                     that.damage += 4;
-                    that.radius += 30;
+                    that.radius += 75;
                     that.value += that.upgradeCost;
                     that.upgradeCost += 100;
                     
@@ -1904,7 +1925,8 @@
                             damage : that.damage,
                             targetTypes : that.targetTypes,
                             sound : 'BombHits',
-                            hitEffect : 'BombHit'
+                            hitEffect : 'BombHit',
+                            trail : true
                         });
                     }
                 }
@@ -2004,8 +2026,7 @@
     }
     
     function clearGame(){
-       // do stuff here to reset the game
-       //send info to high scores
+        window.setTimeout(function () { window.location = window.location; }, 3000);
     }
 
     function UpdateAll(elapsedTime) {
