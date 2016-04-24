@@ -5,36 +5,60 @@ MyGame.screens['help'] = (function(game) {
     var editSell = false
     var editStart = false;
     
+    var b1, b2, b3;
+    
+    var controls = [];
+    var previousControls = localStorage.getItem('Tower.Controls');
+    if (previousControls !== null) {
+        controls = JSON.parse(previousControls);
+        b1 = controls[0];
+        b2 = controls[1];
+        b3 = controls[2];
+    }
+    else {
+        b1 = 'U',
+        b2 = 'S',
+        b3 = 'G';
+    }
+
     function onKeyDownUpgrade(e) {
         if ((e.ctrlKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b1 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.ctrlKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b1 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b1 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b1 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b1 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind1').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b1 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if (( e.keyCode >= 48) && (e.keyCode <= 57)) {
-            document.getElementById('bind1').innerHTML =  String.fromCharCode(e.keyCode);
+            document.getElementById('bind1').innerHTML = String.fromCharCode(e.keyCode);
+            b1 = String.fromCharCode(e.keyCode);
         }
         else if ((e.keyCode >= 65) && (e.keyCode <= 90)) {
             document.getElementById('bind1').innerHTML = String.fromCharCode(e.keyCode);
+            b1 = String.fromCharCode(e.keyCode);
         }
     }
     
@@ -42,32 +66,40 @@ MyGame.screens['help'] = (function(game) {
         if ((e.ctrlKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b2 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.ctrlKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b2 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b2 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b2 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b2 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind2').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b2 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.keyCode >= 48) && (e.keyCode <= 57)) {
             document.getElementById('bind2').innerHTML = String.fromCharCode(e.keyCode);
+            b2 = String.fromCharCode(e.keyCode);
         }
         else if ((e.keyCode >= 65) && (e.keyCode <= 90)) {
             document.getElementById('bind2').innerHTML = String.fromCharCode(e.keyCode);
+            b2 = String.fromCharCode(e.keyCode);
         }
     }
     
@@ -75,32 +107,40 @@ MyGame.screens['help'] = (function(game) {
         if ((e.ctrlKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b3 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.ctrlKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Ctrl - " + String.fromCharCode(e.keyCode);
+            b3 = "Ctrl - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b3 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.shiftKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Shift - " + String.fromCharCode(e.keyCode);
+            b3 = "Shift - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 48) && (e.keyCode <= 57)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b3 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.altKey) && (e.keyCode >= 65) && (e.keyCode <= 90)) {
             e.preventDefault();
             document.getElementById('bind3').innerHTML = "Alt - " + String.fromCharCode(e.keyCode);
+            b3 = "Alt - " + String.fromCharCode(e.keyCode);
         }
         else if ((e.keyCode >= 48) && (e.keyCode <= 57)) {
             document.getElementById('bind3').innerHTML = String.fromCharCode(e.keyCode);
+            b3 = String.fromCharCode(e.keyCode);
         }
         else if ((e.keyCode >= 65) && (e.keyCode <= 90)) {
             document.getElementById('bind3').innerHTML = String.fromCharCode(e.keyCode);
+            b3 = String.fromCharCode(e.keyCode);
         }
     }
     
@@ -112,9 +152,11 @@ MyGame.screens['help'] = (function(game) {
 
             if (document.getElementById('bind1').innerHTML == document.getElementById('bind2').innerHTML) {
                 document.getElementById('bind2').innerHTML = "";
+                b2 = "";
             }
             if (document.getElementById('bind1').innerHTML == document.getElementById('bind3').innerHTML) {
                 document.getElementById('bind3').innerHTML = "";
+                b3 = "";
             }
         }
         else {
@@ -132,9 +174,11 @@ MyGame.screens['help'] = (function(game) {
 
             if (document.getElementById('bind2').innerHTML == document.getElementById('bind1').innerHTML) {
                 document.getElementById('bind1').innerHTML = "";
+                b1 = "";
             }
             if (document.getElementById('bind2').innerHTML == document.getElementById('bind3').innerHTML) {
                 document.getElementById('bind3').innerHTML = "";
+                b3 = "";
             }
         }
         else {
@@ -152,9 +196,11 @@ MyGame.screens['help'] = (function(game) {
 
             if (document.getElementById('bind3').innerHTML == document.getElementById('bind2').innerHTML) {
                 document.getElementById('bind2').innerHTML = "";
+                b2 = "";
             }
             if (document.getElementById('bind3').innerHTML == document.getElementById('bind1').innerHTML) {
                 document.getElementById('bind1').innerHTML = "";
+                b1 = "";
             }
         }
         else {
@@ -167,7 +213,13 @@ MyGame.screens['help'] = (function(game) {
 	function initialize() {
 		document.getElementById('id-help-back').addEventListener(
 			'click',
-			function () { game.showScreen('main-menu'); });
+			function () {
+                controls[0] = b1;
+                controls[1] = b2;
+                controls[2] = b3;
+                localStorage['Tower.Controls'] = JSON.stringify(controls);
+                game.showScreen('main-menu');
+            });
 
         document.getElementById('editbutton1').addEventListener(
             'click',
@@ -180,6 +232,11 @@ MyGame.screens['help'] = (function(game) {
         document.getElementById('editbutton3').addEventListener(
             'click',
 			function () { listenForStart(); });
+
+        document.getElementById('bind1').innerHTML = b1
+        document.getElementById('bind2').innerHTML = b2;
+        document.getElementById('bind3').innerHTML = b3;
+
 	}
 	
 	function run() {
@@ -189,6 +246,6 @@ MyGame.screens['help'] = (function(game) {
 	
 	return {
 		initialize : initialize,
-		run : run
+        run : run
 	};
 }(MyGame.game));

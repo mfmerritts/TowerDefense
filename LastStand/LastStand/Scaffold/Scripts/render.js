@@ -13,7 +13,15 @@ MyGame.graphics = (function() {
         context.save();
         context.fillStyle = 'white';
         context.font = "36px Arial";
-        context.fillText("Waiting for player to start game..", 100, 50);
+        context.fillText("Waiting for player to start level..", 100, 50);
+        context.restore();
+    }
+    
+    function drawGameLostMessage() {
+        context.save();
+        context.fillStyle = 'white';
+        context.font = "36px Arial";
+        context.fillText("Game Over", 100, 50);
         context.restore();
     }
 
@@ -39,12 +47,15 @@ MyGame.graphics = (function() {
         }
     }
 
-    function drawMoney(money, score){
+    function drawMoney(money, score, level, wave, creep){
         context.save();
         context.font = "12px Arial";
         context.fillStyle = 'white';
-        context.fillText("$: " + money, 715, 600);
-        context.fillText("Score: " + score, 715, 625);
+        context.fillText("$: " + money, 715, 575);
+        context.fillText("Score: " + score, 715, 600);
+        context.fillText("Level: " + level, 715, 625);
+        context.fillText("Wave: " + wave, 715, 650);
+        context.fillText("Lives: " + creep, 715, 675);
         context.restore();
     }
     
@@ -447,7 +458,7 @@ MyGame.graphics = (function() {
 
     return {
         drawCircle: drawCircle,
-		drawRec : drawRec,
+        drawRec : drawRec,
         drawText : drawText,
         drawParticle : drawParticle,
         drawGameObject : drawGameObject,
@@ -457,6 +468,7 @@ MyGame.graphics = (function() {
         drawMoney : drawMoney, 
         drawMoneyFloat: drawMoneyFloat,
         drawGameStartMessage: drawGameStartMessage,
-        drawSelectedTower : drawSelectedTower
+        drawSelectedTower : drawSelectedTower,
+        drawGameLostMessage: drawGameLostMessage
 	};
 }());
