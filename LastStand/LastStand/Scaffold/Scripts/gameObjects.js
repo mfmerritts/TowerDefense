@@ -1849,7 +1849,7 @@
 
                         Projectile({
                             position : { x: that.position.x, y: that.position.y },
-                            size : 20,
+                            size : 15,
                             speed : 100,
                             direction : { x: Math.cos(that.rotation - Math.PI / 2), y: Math.sin(that.rotation - Math.PI / 2) },
                             maxRange : 800,
