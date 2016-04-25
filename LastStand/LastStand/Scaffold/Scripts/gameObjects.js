@@ -2031,7 +2031,7 @@
             creepsDestroyed : creepsDestroyed,
             towerValues : towerValues,
             levelReached : currentLevel + 1,
-            waveReached : currentWave + 1,
+            waveReached : currentWave,
             remainingLives : 30 - creepsEscaped
         },
             highScores = localStorage.getItem('HighScores-All');

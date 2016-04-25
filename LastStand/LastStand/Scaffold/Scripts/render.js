@@ -19,9 +19,11 @@ MyGame.graphics = (function () {
     
     function drawGameOverMessage(didWin) {
         context.save();
+
+        var message = "Game Over " + (didWin ? "You Win!" : "")
         context.fillStyle = 'white';
         context.font = "36px Arial";
-        context.fillText("Game Over " + didWin ? "You Win!" : "", 300, 400);
+        context.fillText(message, 300, 400);
         context.restore();
     }
     
@@ -127,34 +129,48 @@ MyGame.graphics = (function () {
     };
     
     function drawParticle(particle) {
+        if (!particle) {
+            return;
+        }
+
         context.save();
         context.translate(particle.center.x, particle.center.y);
         context.rotate(particle.rotation);
         context.translate(-particle.center.x, -particle.center.y);
         
-        context.drawImage(
-            images[particle.imageId], 
-            particle.center.x - particle.size / 2, 
-            particle.center.y - particle.size / 2,
-            particle.size, particle.size);
+        var image = images[particle.imageId];
+        if (image) {
+            context.drawImage(
+                image, 
+                particle.center.x - particle.size / 2, 
+                particle.center.y - particle.size / 2,
+                particle.size, particle.size);
+        }
         
         context.restore();
     };
     
     function drawGameObject(renderObject) {
+        if (!renderObject) {
+            return;
+        }
+
         context.save();
-        
+
         if (!renderObject.useMouse) {
             context.translate(renderObject.position.x, renderObject.position.y);
             context.rotate(renderObject.rotation);
             context.translate(-renderObject.position.x, -renderObject.position.y);
         }
         
-        context.drawImage(
-            images[renderObject.imageId],
-            renderObject.useMouse ? mouseX - renderObject.size / 2 : renderObject.position.x - renderObject.size / 2,
-            renderObject.useMouse ? mouseY - renderObject.size / 2 : renderObject.position.y - renderObject.size / 2,
-            renderObject.size, renderObject.size);
+        var image = images[renderObject.imageId];
+        if (image) {
+            context.drawImage(
+                image,
+                renderObject.useMouse ? mouseX - renderObject.size / 2 : renderObject.position.x - renderObject.size / 2,
+                renderObject.useMouse ? mouseY - renderObject.size / 2 : renderObject.position.y - renderObject.size / 2,
+                renderObject.size, renderObject.size);
+        }
         context.restore();
         
         if (renderObject.isSelected) {
